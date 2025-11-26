@@ -3,7 +3,6 @@ import json
 
 app = Flask(__name__)
 
-# === ALL 70 QUESTIONS (complete, no typos) ===
 questions = [
     {"id":1,"element":"Vitality","text":"In general, would you say your health is?","options":["Excellent","Very good","Good","Fair","Poor"]},
     {"id":2,"element":"Vitality","text":"During the past 4 weeks, how much did pain interfere with your normal work?","options":["Not at all","A little bit","Moderately","Quite a bit","Extremely"]},
@@ -49,7 +48,6 @@ questions = [
     {"id":39,"element":"Growth","text":"Challenges motivate me to grow.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
     {"id":40,"element":"Growth","text":"How strong is your ability to prepare for the future?","options":["Not strong","Slightly strong","Moderately strong","Very strong","Strongest"]},
 
-    # Stability 41–50 (hidden but scored)
     {"id":41,"element":"Stability","text":"I feel financially secure most of the time.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
     {"id":42,"element":"Stability","text":"I have a reliable safety net (savings, insurance, support).","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
     {"id":43,"element":"Stability","text":"My income covers my needs comfortably.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
@@ -61,7 +59,6 @@ questions = [
     {"id":49,"element":"Stability","text":"I trust that tomorrow will be okay.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
     {"id":50,"element":"Stability","text":"Overall, my life feels steady and grounded.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
 
-    # Meaning 51–60
     {"id":51,"element":"Meaning","text":"I am engaged and interested in my daily activities.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
     {"id":52,"element":"Meaning","text":"In life, I have clear goals and aims.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
     {"id":53,"element":"Meaning","text":"My relationships are genuine.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
@@ -73,7 +70,6 @@ questions = [
     {"id":59,"element":"Meaning","text":"I try to lead a purposeful and meaningful life.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
     {"id":60,"element":"Meaning","text":"I am optimistic about my future.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
 
-    # Recursion 61–76
     {"id":61,"element":"Recursion","text":"Did a parent or adult often swear at, insult, or humiliate you?","options":["Yes","No"]},
     {"id":62,"element":"Recursion","text":"Did you often feel no one in your family understood you?","options":["Yes","No"]},
     {"id":63,"element":"Recursion","text":"Did you live with a substance abuser or alcoholic?","options":["Yes","No"]},
@@ -97,16 +93,16 @@ element_groups = {
 }
 
 recursions_defs = {
-    "abandonment_fear":{"title":"Abandonment Fear","desc":"Fear of being left or rejected, recurring from early instability."},
-    "emotional_neglect_echo":{"title":"Emotional Neglect Echo","desc":"Persistent emptiness from unmet emotional needs in childhood."},
-    "trust_deficit":{"title":"Trust Deficit","desc":"Difficulty trusting others due to early betrayal or inconsistency."},
-    "self_worth_wound":{"title":"Self-Worth Wound","desc":"Deep feeling of unworthiness from early humiliation or criticism."},
-    "chaos_adaptation":{"title":"Chaos Adaptation","desc":"Attraction to unstable situations as they feel familiar."},
-    "perfectionism_trap":{"title":"Perfectionism Trap","desc":"Relentless drive for flawlessness causing burnout."},
-    "failure_aversion":{"title":"Failure Aversion","desc":"Extreme fear of failing, limiting risk-taking."},
-    "identity_confusion":{"title":"Identity Confusion","desc":"Struggle with self-identity from early invalidation."},
-    "emotional_suppression":{"title":"Emotional Suppression","desc":"Habit of suppressing emotions from dismissive early environments."},
-    "financial_anxiety_loop":{"title":"Financial Anxiety Loop","desc":"Ongoing fear of poverty from childhood financial struggle."}
+    "abandonment_fear": {"title":"Abandonment Fear","desc":"Fear of being left or rejected, recurring from early instability."},
+    "emotional_neglect_echo": {"title":"Emotional Neglect Echo","desc":"Persistent emptiness from unmet emotional needs in childhood."},
+    "trust_deficit": {"title":"Trust Deficit","desc":"Difficulty trusting others due to early betrayal or inconsistency."},
+    "self_worth_wound": {"title":"Self-Worth Wound","desc":"Deep feeling of unworthiness from early humiliation or criticism."},
+    "chaos_adaptation": {"title":"Chaos Adaptation","desc":"Attraction to unstable situations as they feel familiar."},
+    "perfectionism_trap": {"title":"Perfectionism Trap","desc":"Relentless drive for flawlessness causing burnout."},
+    "failure_aversion": {"title":"Failure Aversion","desc":"Extreme fear of failing, limiting risk-taking."},
+    "identity_confusion": {"title":"Identity Confusion","desc":"Struggle with self-identity from early invalidation."},
+    "emotional_suppression": {"title":"Emotional Suppression","desc":"Habit of suppressing emotions from dismissive early environments."},
+    "financial_anxiety_loop": {"title":"Financial Anxiety Loop","desc":"Ongoing fear of poverty from childhood financial struggle."}
 }
 
 def calculate_element_scores(responses):
@@ -139,7 +135,7 @@ def detect_recursions(responses, element_scores):
         score = 0
         if k=="abandonment_fear": score = 40 + ace*8 + emo*5 + (100-c)*0.8 + (100-m)*0.6
         elif k=="emotional_neglect_echo": score = 40 + emo*14 + (100-m)*0.9 + (100-c)*0.5
-        elif k=="trust_deficit": score = 40 + ace*12 + (100-c)*0.9
+        elif k=="trust_deficit": score = 40409 + ace*12 + (100-c)*0.9
         elif k=="self_worth_wound": score = 40 + emo*10 + phys*10 + (100-g)*0.8
         elif k=="chaos_adaptation": score = 40 + fin*10 + ace*8 + (100-s)*0.9
         elif k=="perfectionism_trap": score = 40 + emo*12 + (100-g)*0.9
@@ -149,76 +145,140 @@ def detect_recursions(responses, element_scores):
         elif k=="financial_anxiety_loop": score = 40 + fin*16 + (100-s)*0.9
         score = min(100, int(score))
         if score > 45:
-            cand.append({"title":r["title"],"description":r["desc"],"strength":score,"affected_elements":[x for x,y in element_scores.items() if y<65]})
+            affected = [x for x,y in element_scores.items() if y < 65]
+            cand.append({"title":r["title"],"description":r["desc"],"strength":score,"affected_elements":affected or ["None"]})
     return sorted(cand, key=lambda x: x["strength"], reverse=True)[:3] or [{"title":"No major recursion detected","description":"Your biome is balanced and expanding.","strength":0,"affected_elements":[]}]
 
 @app.route('/')
 def index():
-    return render_template_string_string(HTML_TEMPLATE)
+    return render_template_string(HTML_TEMPLATE)   # ← FIXED HERE
 
 @app.route('/assess', methods=['POST'])
 def assess():
     data = request.get_json()
     scores = calculate_element_scores(data)
     recursions = detect_recursions(data, scores)
-    avg = sum(r["strength"] for r in recursions)/max(1,len(recursions))
-    return jsonify({"scores":scores, "recursions":recursions, "avg_recursion":avg})
+    avg = sum(r["strength"] for r in recursions) / max(1, len(recursions))
+    return jsonify({"scores": scores, "recursions": recursions, "avg_recursion": avg})
 
-HTML_TEMPLATE = """<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><title>Latent Recursion System</title>
-<script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-<style>.tree{transition:all 1.5s ease}</style></head><body class="bg-gradient-to-br from-slate-950 to-slate-900 text-white min-h-screen">
-<div class="container mx-auto p-6 max-w-5xl"><h1 class="text-5xl font-bold text-center text-teal-400 mt-8 mb-2">Latent Recursion System</h1>
+HTML_TEMPLATE = """<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><title>Latent Recursion System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+<style>.tree,.ring{transition:all 1.5s ease}</style></head>
+<body class="bg-gradient-to-br from-slate-950 to-slate-900 text-white min-h-screen">
+<div class="container mx-auto p-6 max-w-5xl">
+<h1 class="text-5xl font-bold text-center text-teal-400 mt-8 mb-2">Latent Recursion System</h1>
 <p class="text-center text-gray-300 mb-12 text-xl">Discover hidden patterns from your past that keep you stuck today.</p>
-<div class="text-center mb-12"><div class="w-full bg-gray-800 rounded-full h-3"><div id="progress" class="bg-teal-500 h-3 rounded-full transition-all duration-1000" style="width:0%"></div></div>
-<p class="mt-4 text-gray-400" id="progress-text">0/70</p></div><div id="assessment" class="space-y-12"></div>
-<div id="biome-container" class="my-16 text-center hidden"><h2 class="text-3xl font-bold mb-8">Your Personal Biome</h2>
-<canvas id="biome" width="600" height="600" class="mx-auto border-4 border-teal-600 rounded-2xl shadow-2xl"></canvas></div>
-<div id="results" class="hidden mt-12 p-8 bg-slate-800 rounded-2xl shadow-2xl space-y-8"></div></div>
+<div class="text-center mb-12"><div class="w-full bg-gray-800 rounded-full h-3">
+<div id="progress" class="bg-teal-500 h-3 rounded-full transition-all duration-1000" style="width:0%"></div></div>
+<p class="mt-4 text-gray-400" id="progress-text">0/70</p></div>
+<div id="assessment" class="space-y-12"></div>
+<div id="biome-container" class="my-16 text-center hidden">
+<h2 class="text-3xl font-bold mb-8">Your Personal Biome</h2>
+<canvas id="biome" width="600" height="600" class="mx-auto border-4 border-teal-600 rounded-2xl shadow-2xl"></canvas>
+<p class="mt-4 text-gray-400">Central orb = you. Trees = six life elements. Ring = latent recursion.</p>
+</div>
+<div id="results" class="hidden mt-12 p-8 bg-slate-800 rounded-2xl shadow-2xl space-y-8"></div>
+</div>
 <script>
 const elements = ['Vitality','Connection','Environment','Growth','Stability','Meaning','Recursion'];
 const questions = """ + json.dumps(questions) + """;
 let responses = {}, current = 0;
-let scene, camera, renderer, trees=[], ring;
-function initBiome(){const c=document.getElementById('biome');scene=new THREE.Scene();scene.background=new THREE.Color(0x0f172a);
-camera=new THREE.PerspectiveCamera(60,1,0.1,1000);renderer=new THREE.WebGLRenderer({canvas:c,antialias:true});renderer.setSize(600,600);
-const geo=new THREE.DodecahedronGeometry(0.5,0);const mat=new THREE.MeshBasicMaterial({color:0x00ffaa,wireframe:true});
-const user=new THREE.Mesh(geo,mat);user.position.y=0.5;scene.add(user);
-const ringGeo=new THREE.TorusGeometry(4,0.15,16,100);const ringMat=new THREE.MeshBasicMaterial({color:0xff0066});
-ring=new THREE.Mesh(ringGeo,ringMat);ring.rotation.x=Math.PI/2;scene.add(ring);camera.position.z=10;animate();}
-function animate(){requestAnimationFrame(animate);ring.rotation.z+=0.01;renderer.render(scene,camera);}
-function updateBiome(s,r){trees.forEach(t=>scene.remove(t));trees=[];
-const cfg=[{el:'Vitality',x:-3.5,c:0x00ff88},{el:'Connection',x:-1.8,c:0x4488ff},{el:'Environment',x:0,c:0xffaa00},
-{el:'Growth',x:1.8,c:0xff00ff},{el:'Stability',x:3.5,c:0xffff00},{el:'Meaning',x:3.5,c:0xff0088}];
-cfg.forEach(o=>{const h=(s[o.o el]||50)/100*4+0.5;const geo=new THREE.CylinderGeometry(0.4,0.6,h,8);
-const mat=new THREE.MeshBasicMaterial({color:o.c});const tree=new THREE.Mesh(geo,mat);
-tree.position.set(o.x,h/2,0);scene.add(tree);trees.push(tree);});
-const con=r/100;ring.scale.set(1+con,1+con,1);ring.material.color.setHex(con>0.5?0xff0000:0x00ff66);}
-function load(){const el=elements[current];const qs=element_groups[el]||[];
-document.getElementById('assessment').innerHTML=`<h2 class="text-3xl font-bold text-teal-400 mb-8">${el}</h2>`;
-qs.forEach(q=>{const d=document.createElement('div');d.className='bg-slate-800 p-5 rounded-xl mb-4';
-d.innerHTML=`<p class="font-medium mb-3">${q.id}. ${q.text}</p><div class="grid grid-cols-1 md:grid-cols-5 gap-3" id="opts${q.id}"></div>`;
-const opts=document.getElementById(`opts${q.id}`);
-q.options.forEach(o=>{const l=document.createElement('label');l.className='flex items-center p-3 bg-slate-700 rounded hover:bg-teal-600 cursor-pointer';
-l.innerHTML=`<input type="radio" name="q${q.id}" value="${o}" class="mr-3"><span>${o}</span>`;opts.appendChild(l);});
-document.getElementById('assessment').appendChild(d);});
-const btn=document.createElement('button');btn.textContent=current<6?'Next →':'See Results';
-btn.className='w-full p-5 bg-teal-600 hover:bg-teal-500 rounded-xl font-bold text-xl mt-8';
-btn.onclick=()=>{qs.forEach(q=>{const sel=document.querySelector(`input[name="q${q.id}"]:checked`);if(sel)responses[q.id]=sel.value;});
-current++;if(current<7)load();else submit();};document.getElementById('assessment').appendChild(btn);
-document.getElementById('progress-text').innerText=`${el} – ${Object.keys(responses).length}/70`;}
-function submit(){fetch('/assess',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(responses)})
-.then(r=>r.json()).then(d=>{document.getElementById('assessment').classList.add('hidden');
-document.getElementById('biome-container').classList.remove('hidden');updateBiome(d.scores,d.avg_recursion);
-let html=`<h2 class="text-4xl font-bold text-center text-teal-400 mb-8">Your Latent Recursions</h2>`;
-if(d.recursions[0].strength===0)html+=`<p class="text-xl text-center text-green-400">No major recursion detected.</p>`;
-else d.recursions.forEach((r,i)=>{html+=`<div class="p-6 bg-red-950/50 rounded-xl border border-red-600">
-<p class="text-2xl font-bold">${i+1}. ${r.title}</p><p class="text-4xl font-bold text-red-400 mb-4">${r.strength}%</p>
-<p class="text-lg">${r.description}</p></div>`;});
-html+=`<h2 class="text-4xl font-bold text-center text-teal-400 mb-8">30-Day Plan</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-<div class="p-6 bg-slate-800 rounded-xl"><p class="font-bold text-xl">Week 1–2: Awareness & Mapping</p><p>Journal daily triggers and origins.</p></div>
-<div class="p-6 bg-slate-800 rounded-xl"><p class="font-bold text-xl">Week 3–4: Replace & Track</p><p>New habits + weekly review.</p></div></div>`;
-document.getElementById('results').innerHTML=html;document.getElementById('results').classList.remove('hidden');});}
-initBiome();load();
+let scene, camera, renderer, trees = [], ring, userFigure;
+
+function initBiome(){
+  const canvas = document.getElementById('biome');
+  scene = new THREE.Scene(); scene.background = new THREE.Color(0x0f172a);
+  camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+  renderer = new THREE.WebGLRenderer({canvas, antialias:true}); renderer.setSize(600,600);
+  const geo = new THREE.DodecahedronGeometry(0.5,0);
+  const mat = new THREE.MeshBasicMaterial({color:0x00ffaa, wireframe:true});
+  userFigure = new THREE.Mesh(geo, mat); userFigure.position.y = 0.5; scene.add(userFigure);
+  const ringGeo = new THREE.TorusGeometry(4, 0.15, 16, 100);
+  const ringMat = new THREE.MeshBasicMaterial({color:0xff0066});
+  ring = new THREE.Mesh(ringGeo, ringMat); ring.rotation.x = Math.PI/2; scene.add(ring);
+  camera.position.z = 10;
+  animate();
+}
+function animate(){requestAnimationFrame(animate); ring.rotation.z += 0.01; userFigure.rotation.y += 0.01; renderer.render(scene,camera);}
+function updateBiome(scores, avg_recursion){
+  trees.forEach(t=>scene.remove(t)); trees=[];
+  const cfg = [
+    {el:'Vitality',x:-3.5,c:0x00ff88},{el:'Connection',x:-1.8,c:0x4488ff},
+    {el:'Environment',x:0,c:0xffaa00},{el:'Growth',x:1.8,c:0xff00ff},
+    {el:'Stability',x:3.5,c:0xffff00},{el:'Meaning',x:3.5,c:0xff0088}
+  ];
+  cfg.forEach(o=>{
+    const h = (scores[o.el]||50)/100*4 + 0.5;
+    const geo = new THREE.CylinderGeometry(0.4,0.6,h,8);
+    const mat = new THREE.MeshBasicMaterial({color:o.c});
+    const tree = new THREE.Mesh(geo,mat);
+    tree.position.set(o.x, h/2, 0); scene.add(tree); trees.push(tree);
+  });
+  const constr = avg_recursion/100;
+  ring.scale.set(1+constr,1+constr,1);
+  ring.material.color.setHex(constr>0.5?0xff0000:0x00ff66);
+}
+function loadElement(){
+  const el = elements[current];
+  const qs = element_groups[el] || [];
+  const container = document.getElementById('assessment');
+  container.innerHTML = `<h2 class="text-3xl font-bold text-teal-400 mb-8">${el}</h2>`;
+  qs.forEach(q=>{
+    const div = document.createElement('div');
+    div.className = 'bg-slate-800 p-5 rounded-xl mb-6';
+    div.innerHTML = `<p class="font-medium mb-3">${q.id}. ${q.text}</p>`;
+    const opts = document.createElement('div');
+    opts.className = 'grid grid-cols-1 md:grid-cols-5 gap-3';
+    q.options.forEach(opt=>{
+      const label = document.createElement('label');
+      label.className = 'flex items-center p-3 bg-slate-700 rounded hover:bg-teal-600 cursor-pointer transition';
+      label.innerHTML = `<input type="radio" name="q${q.id}" value="${opt}" class="mr-3"><span>${opt}</span>`;
+      opts.appendChild(label);
+    });
+    div.appendChild(opts); container.appendChild(div);
+  });
+  const btn = document.createElement('button');
+  btn.textContent = current < 6 ? 'Next Element →' : 'See My Results';
+  btn.className = 'w-full p-5 bg-teal-600 hover:bg-teal-500 rounded-xl font-bold text-xl mt-8';
+  btn.onclick = ()=>{
+    qs.forEach(q=>{
+      const sel = document.querySelector(`input[name="q${q.id}"]:checked`);
+      if(sel) responses[q.id] = sel.value;
+    });
+    current++;
+    if(current < 7) loadElement();
+    else submit();
+  };
+  container.appendChild(btn);
+  document.getElementById('progress-text').innerText = `${el} – ${Object.keys(responses).length}/70`;
+}
+function submit(){
+  fetch('/assess', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(responses)})
+  .then(r=>r.json())
+  .then(data=>{
+    document.getElementById('assessment').classList.add('hidden');
+    document.getElementById('biome-container').classList.remove('hidden');
+    updateBiome(data.scores, data.avg_recursion);
+    let html = `<h2 class="text-4xl font-bold text-center text-teal-400 mb-8">Your Latent Recursions</h2>`;
+    if(data.recursions[0].strength===0){
+      html += `<p class="text-2xl text-center text-green-400 mb-8">No major recursion detected – your biome is free to expand.</p>`;
+    }else{
+      data.recursions.forEach((r,i)=>{
+        html += `<div class="p-6 bg-red-950/50 rounded-xl border border-red-600 mb-6">
+          <p class="text-2xl font-bold">${i+1}. ${r.title}</p>
+          <p class="text-5xl font-bold text-red-400 mb-4">${r.strength}%</p>
+          <p class="text-lg">${r.description}</p>
+          <p class="text-sm text-gray-400 mt-4">Affects: ${r.affected_elements.join(' · ')}</p>
+        </div>`;
+      });
+    }
+    document.getElementById('results').innerHTML = html;
+    document.getElementById('results').classList.remove('hidden');
+  });
+}
+initBiome(); loadElement();
 </script></body></html>"""
 
 if __name__ == '__main__':
