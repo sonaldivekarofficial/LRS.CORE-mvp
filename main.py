@@ -76,7 +76,8 @@ questions = [
     {"id":76,"element":"Recursion","text":"My household struggled financially and we barely had enough to make ends meet.","options":["Never true","Rarely true","Sometimes true","Often true","Very often true"]}
 ]
 
-element_groups = {
+# Group IDs only (for JS)
+element_groups_js = {
     "Vitality": [q["id"] for q in questions[0:10]],
     "Connection": [q["id"] for q in questions[10:20]],
     "Environment": [q["id"] for q in questions[20:30]],
@@ -86,26 +87,59 @@ element_groups = {
     "Recursion": [q["id"] for q in questions[60:70]]
 }
 
-recursions_defs = { ... }  # unchanged – full dict in previous messages
+recursions_defs = {
+    "abandonment_fear": {"title":"Abandonment Fear","desc":"Fear of being left or rejected, recurring from early instability."},
+    "emotional_neglect_echo": {"title":"Emotional Neglect Echo","desc":"Persistent emptiness from unmet emotional needs in childhood."},
+    "trust_deficit": {"title":"Trust Deficit","desc":"Difficulty trusting others due to early betrayal or inconsistency."},
+    "self_worth_wound": {"title":"Self-Worth Wound","desc":"Deep feeling of unworthiness from early humiliation or criticism."},
+    "chaos_adaptation": {"title":"Chaos Adaptation","desc":"Attraction to unstable situations as they feel familiar."},
+    "perfectionism_trap": {"title":"Perfectionism Trap","desc":"Relentless drive for flawlessness causing burnout."},
+    "failure_aversion": {"title":"Failure Aversion","desc":"Extreme fear of failing, limiting risk-taking."},
+    "identity_confusion": {"title":"Identity Confusion","desc":"Struggle with self-identity from early invalidation."},
+    "emotional_suppression": {"title":"Emotional Suppression","desc":"Habit of suppressing emotions from dismissive early environments."},
+    "financial_anxiety_loop": {"title":"Financial Anxiety Loop","desc":"Ongoing fear of poverty from childhood financial struggle."}
+}
 
 def calculate_element_scores(responses):
     scores = {}
-    for el, ids in {"Vitality":questions[0:10],"Connection":questions[10:20],"Environment":questions[20:30],"Growth":questions[30:40],"Stability":questions[40:50],"Meaning":questions[50:60]}.items():
+    for el, qs in {"Vitality":questions[0:10],"Connection":questions[10:20],"Environment":questions[20:30],
+                   "Growth":questions[30:40],"Stability":questions[40:50],"Meaning":questions[50:60]}.items():
         total = count = 0
-        for q in ids:
+        for q in qs:
             val = responses.get(str(q["id"]))
             if not val: continue
             idx = q["options"].index(val)
-            negative = any(k in q["text"].lower() for k in ["pain","exhaustion","unable","lack","left out","negatively","clutter","poor","never","trouble","worry","anxious","stressed","interfere"])
-            val_num = len(q["options"])-1 - idx if negative else idx
+            neg = any(w in q["text"].lower() for w in ["pain","exhaustion","unable","lack","left out","negatively","clutter","poor","never","worry","stressed","interfere"])
+            val_num = len(q["options"])-1 - idx if neg else idx
             total += val_num
             count += 1
         scores[el] = round((total / (count * (len(q["options"])-1))) * 100) if count else 50
     return scores
 
-def detect_recursions(responses, element_scores):
-    # unchanged – same as last working version
-    ...
+def detect_recursions(responses, scores):
+    ace = sum(1 for i in range(61,68) if responses.get(str(i)) == "Yes")
+    emo = ["Never true","Rarely true","Sometimes true","Often true","Very often true"].index(responses.get("71","Rarely true"))
+    phys = ["Never true","Rarely true","Sometimes true","Often true","Very often true"].index(responses.get("72","Rarely true"))
+    fin = ["Never true","Rarely true","Sometimes true","Often true","Very often true"].index(responses.get("76","Rarely true"))
+    v,c,e,g,s,m = (scores.get(k,50) for k in ["Vitality","Connection","Environment","Growth","Stability","Meaning"])
+    cand = []
+    for k,r in recursions_defs.items():
+        sc = 0
+        if k=="abandonment_fear": sc = 40 + ace*8 + emo*5 + (100-c)*0.8 + (100-m)*0.6
+        elif k=="emotional_neglect_echo": sc = 40 + emo*14 + (100-m)*0.9
+        elif k=="trust_deficit": sc = 40 + ace*12 + (100-c)*0.9
+        elif k=="self_worth_wound": sc = 40 + emo*10 + phys*10 + (100-g)*0.8
+        elif k=="chaos_adaptation": sc = 40 + fin*10 + ace*8 + (100-s)*0.9
+        elif k=="perfectionism_trap": sc = 40 + emo*12 + (100-g)*0.9
+        elif k=="failure_aversion": sc = 40 + phys*12 + (100-g)*0.9
+        elif k=="identity_confusion": sc = 40 + emo*12 + (100-m)*0.9
+        elif k=="emotional_suppression": sc = 40 + emo*14 + (100-v)*0.8
+        elif k=="financial_anxiety_loop": sc = 40 + fin*16 + (100-s)*0.9
+        sc = min(100, int(sc))
+        if sc > 45:
+            aff = [x for x,y in scores.items() if y < 65]
+            cand.append({"title":r["title"],"description":r["desc"],"strength":sc,"affected_elements":aff or ["None"]})
+    return sorted(cand, key=lambda x: x["strength"], reverse=True)[:3] or [{"title":"No major recursion detected","description":"Your biome is free and expanding.","strength":0,"affected_elements":[]}]
 
 @app.route('/')
 def index():
@@ -119,6 +153,121 @@ def assess():
     avg = sum(r["strength"] for r in recursions) / max(1, len(recursions))
     return jsonify({"scores": scores, "recursions": recursions, "avg_recursion": avg})
 
-HTML_TEMPLATE = f"""... (full working HTML with properly injected questions and element_groups – see my next message for the exact string) ..."""
+HTML_TEMPLATE = f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><title>Latent Recursion System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+<style>.tree,.ring{{transition:all 1.5s ease}}</style></head>
+<body class="bg-gradient-to-br from-slate-950 to-slate-900 text-white min-h-screen">
+<div class="container mx-auto p-6 max-w-5xl">
+<h1 class="text-5xl font-bold text-center text-teal-400 mt-8 mb-2">Latent Recursion System</h1>
+<p class="text-center text-gray-300 mb-12 text-xl">Discover hidden patterns from your past that keep you stuck today.</p>
+<div class="text-center mb-12"><div class="w-full bg-gray-800 rounded-full h-3">
+<div id="progress" class="bg-teal-500 h-3 rounded-full transition-all duration-1000" style="width:0%"></div></div>
+<p class="mt-4 text-gray-400" id="progress-text">0/70</p></div>
+<div id="assessment" class="space-y-12"></div>
+<div id="biome-container" class="my-16 text-center hidden"><h2 class="text-3xl font-bold mb-8">Your Personal Biome</h2>
+<canvas id="biome" width="600" height="600" class="mx-auto border-4 border-teal-600 rounded-2xl shadow-2xl"></canvas></div>
+<div id="results" class="hidden mt-12 p-8 bg-slate-800 rounded-2xl shadow-2xl space-y-8"></div>
+</div>
 
-# FULL WORKING FILE IN NEXT MESSAGE – IT IS LIVE AND PERFECT
+<script>
+const questions = {json.dumps(questions)};
+const elementGroups = {json.dumps(element_groups_js)};
+const order = ['Vitality','Connection','Environment','Growth','Stability','Meaning','Recursion'];
+let responses = {{}}, current = 0;
+let scene, camera, renderer, trees = [], ring;
+
+function initBiome() {{
+  const canvas = document.getElementById('biome');
+  scene = new THREE.Scene(); scene.background = new THREE.Color(0x0f172a);
+  camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
+  renderer = new THREE.WebGLRenderer({{canvas, antialias:true}}); renderer.setSize(600,600);
+  const geo = new THREE.DodecahedronGeometry(0.5,0);
+  const mat = new THREE.MeshBasicMaterial({{color:0x00ffaa, wireframe:true}});
+  const user = new THREE.Mesh(geo, mat); user.position.y = 0.5; scene.add(user);
+  const ringGeo = new THREE.TorusGeometry(4, 0.15, 16, 100);
+  const ringMat = new THREE.MeshBasicMaterial({{color:0xff0066}});
+  ring = new THREE.Mesh(ringGeo, ringMat); ring.rotation.x = Math.PI/2; scene.add(ring);
+  camera.position.z = 10;
+  animate();
+}}
+function animate() {{ requestAnimationFrame(animate); ring.rotation.z += 0.01; renderer.render(scene,camera); }}
+
+function updateBiome(scores, avg) {{
+  trees.forEach(t => scene.remove(t)); trees = [];
+  const cfg = [
+    {{el:'Vitality',x:-3.5,c:0x00ff88}},{{el:'Connection',x:-1.8,c:0x4488ff}},
+    {{el:'Environment',x:0,c:0xffaa00}},{{el:'Growth',x:1.8,c:0xff00ff}},
+    {{el:'Stability',x:3.5,c:0xffff00}},{{el:'Meaning',x:3.5,c:0xff0088}}
+  ];
+  cfg.forEach(o => {{
+    const h = (scores[o.el] || 50)/100*4 + 0.5;
+    const geo = new THREE.CylinderGeometry(0.4,0.6,h,8);
+    const mat = new THREE.MeshBasicMaterial({{color:o.c}});
+    const tree = new THREE.Mesh(geo,mat);
+    tree.position.set(o.x, h/2, 0); scene.add(tree); trees.push(tree);
+  }});
+  const con = avg/100;
+  ring.scale.set(1+con,1+con,1);
+  ring.material.color.setHex(con > 0.5 ? 0xff0000 : 0x00ff66);
+}}
+
+function loadElement() {{
+  const el = order[current];
+  const ids = elementGroups[el];
+  const qs = questions.filter(q => ids.includes(q.id));
+  const cont = document.getElementById('assessment');
+  cont.innerHTML = `<h2 class="text-3xl font-bold text-teal-400 mb-8">${{el}}</h2>`;
+  qs.forEach(q => {{
+    const div = document.createElement('div');
+    div.className = 'bg-slate-800 p-5 rounded-xl mb-6';
+    div.innerHTML = `<p class="font-medium mb-3">${{q.id}}. ${{q.text}}</p><div class="grid grid-cols-1 md:grid-cols-${{Math.min(5,q.options.length)}} gap-3"></div>`;
+    const opts = div.lastChild;
+    q.options.forEach(opt => {{
+      const lbl = document.createElement('label');
+      lbl.className = 'flex items-center p-3 bg-slate-700 rounded hover:bg-teal-600 cursor-pointer transition';
+      lbl.innerHTML = `<input type="radio" name="q${{q.id}}" value="${{opt}}" class="mr-3"><span>${{opt}}</span>`;
+      opts.appendChild(lbl);
+    }});
+    cont.appendChild(div);
+  }});
+  const btn = document.createElement('button');
+  btn.textContent = current < 6 ? 'Next Element →' : 'See My Results';
+  btn.className = 'w-full p-5 bg-teal-600 hover:bg-teal-500 rounded-xl font-bold text-xl mt-8';
+  btn.onclick = () => {{
+    qs.forEach(q => {{ const sel = document.querySelector(`input[name="q${{q.id}}"]:checked`); if(sel) responses[q.id] = sel.value; }});
+    current++;
+    if(current < 7) loadElement();
+    else submit();
+  }};
+  cont.appendChild(btn);
+  document.getElementById('progress-text').innerText = `${{el}} – ${{Object.keys(responses).length}}/70`;
+}}
+
+function submit() {{
+  fetch('/assess', {{method:'POST', headers:{{'Content-Type':'application/json'}}, body:JSON.stringify(responses)}})
+  .then(r => r.json()).then(d => {{
+    document.getElementById('assessment').classList.add('hidden');
+    document.getElementById('biome-container').classList.remove('hidden');
+    updateBiome(d.scores, d.avg_recursion);
+    let html = `<h2 class="text-4xl font-bold text-center text-teal-400 mb-8">Your Latent Recursions</h2>`;
+    if(d.recursions[0].strength === 0) html += `<p class="text-2xl text-center text-green-400">No major recursion detected – your biome is free.</p>`;
+    else d.recursions.forEach(r => {{
+      html += `<div class="p-6 bg-red-950/50 rounded-xl border border-red-600 mb-6">
+        <p class="text-2xl font-bold">${{r.title}}</p>
+        <p class="text-5xl font-bold text-red-400 mb-4">${{r.strength}}%</p>
+        <p class="text-lg">${{r.description}}</p>
+        <p class="text-sm text-gray-400 mt-2">Affects: ${{r.affected_elements.join(' · ')}}</p>
+      </div>`;
+    }});
+    document.getElementById('results').innerHTML = html;
+    document.getElementById('results').classList.remove('hidden');
+  }});
+}}
+
+initBiome(); loadElement();
+</script></body></html>"""
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, debug=False)
