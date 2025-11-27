@@ -1,3 +1,4 @@
+```python:disable-run
 from flask import Flask, request, render_template_string, jsonify
 import json
 
@@ -5,7 +6,7 @@ app = Flask(__name__)
 
 # =============================================
 # LATENT RECURSION SYSTEM v11.0 – FINAL FIXED VERSION
-# 70 questions (all visible, including Stability); grammar fixed; selected option green; page scrolls to top; back button; top 3 patterns with root/symptom/action; biome with red currents
+# 70 questions (all visible, including Stability); grammar fixed; selected option green; page scrolls to top; back button; top 3 patterns with root/symptom/action; biome with circle trees & red currents
 # =============================================
 
 questions = [
@@ -38,30 +39,30 @@ questions = [
     {"id": 22, "element": "Environment", "text": "How clean and well-maintained is your neighbourhood?", "options": ["Very poor", "Poor", "Fair", "Good", "Very good"]},
     {"id": 23, "element": "Environment", "text": "I have access to park/garden/green space around my neighborhood.", "options": ["Strongly disagree", "Disagree", "Agree", "Strongly agree"]},
     {"id": 24, "element": "Environment", "text": "How clean and well-maintained is your home?", "options": ["Very poor", "Poor", "Fair", "Good", "Very good"]},
-    {"id": 25, "element": "Environment", "text": "I have enough private space in my home", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 26, "element": "Environment", "text": "I feel safe and comfortable in my home", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
+    {"id": 25, "element": "Environment", "text": "I have enough private space in my home.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
+    {"id": 26, "element": "Environment", "text": "I feel safe and comfortable in my home.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
     {"id": 27, "element": "Environment", "text": "How often does clutter or disorganization affect your daily life?", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
-    {"id": 28, "element": "Environment", "text": "Rate your work place’s overall comfortability and functionality.", "options": ["Poor", "Fair", "Good", "Very good", "Excellent"]},
+    {"id": 28, "element": "Environment", "text": "Rate your workplace's overall comfortability and functionality.", "options": ["Poor", "Fair", "Good", "Very good", "Excellent"]},
     {"id": 29, "element": "Environment", "text": "Transit from my home to work and city is often comfortable.", "options": ["Strongly disagree", "Disagree", "Agree", "Strongly agree"]},
-    {"id": 30, "element": "Environment", "text": "My home/work space/ neighbourhood positively impacts my well-being.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
+    {"id": 30, "element": "Environment", "text": "My home/work space/neighbourhood positively impacts my well-being.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
 
     # Growth (31-40)
     {"id": 31, "element": "Growth", "text": "I have found a meaningful career.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
     {"id": 32, "element": "Growth", "text": "My work is aligned with my career goals.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 33, "element": "Growth", "text": "I actively seek opportunities for career growth within my work space.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
+    {"id": 33, "element": "Growth", "text": "I actively seek opportunities for career growth within my workspace.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
     {"id": 34, "element": "Growth", "text": "I actively seek opportunities to learn new skills.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 35, "element": "Growth", "text": "I actively seek opportunities to switch job for higher pay and designation.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 36, "element": "Growth", "text": "Setbacks don't discourage me.", "options": ["Not like me at all", "Not much like me", "Somewhat like me", "Mostly like me", "Very much like me"]},
-    {"id": 37, "element": "Growth", "text": "I always manage to solve problems and get things done", "options": ["Not at all true", "Hardly true", "Moderately true", "Exactly true"]},
+    {"id": 35, "element": "Growth", "text": "I actively seek opportunities to switch jobs for higher pay and designation.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
+    {"id": 36, "element": "Growth", "text": "Setbacks do not discourage me.", "options": ["Not like me at all", "Not much like me", "Somewhat like me", "Mostly like me", "Very much like me"]},
+    {"id": 37, "element": "Growth", "text": "I always manage to solve problems and get things done.", "options": ["Not at all true", "Hardly true", "Moderately true", "Exactly true"]},
     {"id": 38, "element": "Growth", "text": "I am confident I could deal efficiently with unexpected events like loss of job.", "options": ["Not at all true", "Hardly true", "Moderately true", "Exactly true"]},
     {"id": 39, "element": "Growth", "text": "Challenges motivate me to grow.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
     {"id": 40, "element": "Growth", "text": "How strong is your ability to prepare for the future?", "options": ["Not strong", "Slightly strong", "Moderately strong", "Very strong", "Strongest"]},
 
-    # Stability (41-50)
+    # Stability (41-50) – now visible
     {"id": 41, "element": "Stability", "text": "How often have you had trouble paying bills?", "options": ["Never", "Rarely", "Sometimes", "Often", "Very often"]},
     {"id": 42, "element": "Stability", "text": "How often do you wonder if you are earning enough money?", "options": ["Never", "Rarely", "Sometimes", "Often", "Very often"]},
-    {"id": 43, "element": "Stability", "text": "How often do you feel anxious about my current financial situation.", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
-    {"id": 44, "element": "Stability", "text": "I worry about my/my family’s spending habits", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
+    {"id": 43, "element": "Stability", "text": "How often do you feel anxious about your current financial situation?", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
+    {"id": 44, "element": "Stability", "text": "I worry about my/my family’s spending habits.", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
     {"id": 45, "element": "Stability", "text": "I feel stressed about my debts.", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
     {"id": 46, "element": "Stability", "text": "I could handle a major unexpected expense like a hospital bill.", "options": ["Completely", "Very well", "Somewhat", "Very little", "Not at all"]},
     {"id": 47, "element": "Stability", "text": "I know what my financial goals are.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
@@ -74,40 +75,40 @@ questions = [
     {"id": 52, "element": "Meaning", "text": "In life, I have clear goals and aims.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
     {"id": 53, "element": "Meaning", "text": "My relationships are genuine.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
     {"id": 54, "element": "Meaning", "text": "I feel genuinely interested in lives of people around me.", "options": ["Very slightly or not at all", "A little", "Moderately", "Quite a bit", "Extremely"]},
-    {"id": 55, "element": "Meaning", "text": "I personally know some people who earnestly try to make positive difference in the world", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
+    {"id": 55, "element": "Meaning", "text": "I personally know some people who earnestly try to make positive difference in the world.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
     {"id": 56, "element": "Meaning", "text": "I contribute to society with act of service/food donations/financial help.", "options": ["Very slightly or not at all", "A little", "Moderately", "Quite a bit", "Extremely"]},
-    {"id": 57, "element": "Meaning", "text": "I don't hold grudges, I find it easy to forgive and move on", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
+    {"id": 57, "element": "Meaning", "text": "I don't hold grudges, I find it easy to forgive and move on.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
     {"id": 58, "element": "Meaning", "text": "My life has a clear sense of purpose.", "options": ["Absolutely untrue", "Mostly untrue", "Somewhat untrue", "Can't say", "Somewhat true", "Mostly true", "Absolutely true"]},
     {"id": 59, "element": "Meaning", "text": "I try to lead a purposeful and meaningful life.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
     {"id": 60, "element": "Meaning", "text": "I am optimistic about my future.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
 
     # Recursion (61-70)
-    {"id": 61, "element": "Recursion", "text": "Did a parent or adult often swear at, insult, or humiliate you?", "options": ["Yes", "No"]},
-    {"id": 62, "element": "Recursion", "text": "Did you often feel no one in your family understood you?", "options": ["Yes", "No"]},
-    {"id": 63, "element": "Recursion", "text": "Did you live with a substance abuser or alcoholic?", "options": ["Yes", "No"]},
-    {"id": 64, "element": "Recursion", "text": "Was a household member depressed or mentally ill?", "options": ["Yes", "No"]},
-    {"id": 65, "element": "Recursion", "text": "Were your parents separated or divorced?", "options": ["Yes", "No"]},
-    {"id": 66, "element": "Recursion", "text": "Was your mother/father often pushed, grabbed, or slapped?", "options": ["Yes", "No"]},
-    {"id": 67, "element": "Recursion", "text": "Did an adult touch or fondle you sexually or make you touch them?", "options": ["Yes", "No"]},
-    {"id": 71, "element": "Recursion", "text": "I felt emotionally neglected by my family.", "options": ["Never true", "Rarely true", "Sometimes true", "Often true", "Very often true"]},
-    {"id": 72, "element": "Recursion", "text": "I was hit so hard it left marks or bruises.", "options": ["Never true", "Rarely true", "Sometimes true", "Often true", "Very often true"]},
-    {"id": 76, "element": "Recursion", "text": "My household struggled financially and we barely had enough to make ends meet.", "options": ["Never true", "Rarely true", "Sometimes true", "Often true", "Very often true"]}
+    {"id":61,"element":"Recursion","text":"Did a parent or adult often swear at, insult, or humiliate you?","options":["Yes","No"]},
+    {"id":62,"element":"Recursion","text":"Did you often feel no one in your family understood you?","options":["Yes","No"]},
+    {"id":63,"element":"Recursion","text":"Did you live with a substance abuser or alcoholic?","options":["Yes","No"]},
+    {"id":64,"element":"Recursion","text":"Was a household member depressed or mentally ill?","options":["Yes","No"]},
+    {"id":65,"element":"Recursion","text":"Were your parents separated or divorced?","options":["Yes","No"]},
+    {"id":66,"element":"Recursion","text":"Was your mother/father often pushed, grabbed, or slapped?","options":["Yes","No"]},
+    {"id":67,"element":"Recursion","text":"Did an adult touch or fondle you sexually or make you touch them?","options":["Yes","No"]},
+    {"id":71,"element":"Recursion","text":"I felt emotionally neglected by my family.","options":["Never true","Rarely true","Sometimes true","Often true","Very often true"]},
+    {"id":72,"element":"Recursion","text":"I was hit so hard it left marks or bruises.","options":["Never true","Rarely true","Sometimes true","Often true","Very often true"]},
+    {"id":76,"element":"Recursion","text":"My household struggled financially and we barely had enough to make ends meet.","options":["Never true","Rarely true","Sometimes true","Often true","Very often true"]}
 ]
 
 # Element Groups for Scoring
 element_groups = {
-    "Vitality": questions[0:10],
-    "Connection": questions[10:20],
-    "Environment": questions[20:30],
-    "Growth": questions[30:40],
-    "Stability": questions[40:50],
-    "Meaning": questions[50:60],
-    "Recursion": questions[60:70]
+    "Vitality": [q for q in questions if q["element"] == "Vitality"],
+    "Connection": [q for q in questions if q["element"] == "Connection"],
+    "Environment": [q for q in questions if q["element"] == "Environment"],
+    "Growth": [q for q in questions if q["element"] == "Growth"],
+    "Stability": [q for q in questions if q["element"] == "Stability"],
+    "Meaning": [q for q in questions if q["element"] == "Meaning"],
+    "Recursion": [q for q in questions if q["element"] == "Recursion"]
 }
 
-# 50 Recursive Patterns (with root, symptom, action)
+# 50 Recursive Patterns with Root, Symptom, Action
 recursions = [
-    {"name": "Fixed Mindset", "root": "Growing up with labels rather than praise for effort", "symptom": "Avoiding challenges to maintain the label; giving up easily when things get hard", "action": "The \"Not Yet\" Technique. When you struggle, add \"yet\" to the end of the sentence. \"I don't understand this... yet.\" Praise yourself for the process of learning, not the grade/result."},
+    {"name": "Fixed Mindset", "root": "Growing up with labels rather than praise for effort", "symptom": "Avoiding challenges; giving up easily when things get hard", "action": "The \"Not Yet\" Technique. When you struggle, add \"yet\" to the end of the sentence. \"I don't understand this... yet.\" Praise yourself for the process of learning, not the grade/result."},
     {"name": "Good-Child Syndrome", "root": "Survival depended on being obedient, quiet, helpful, never angry, never needy", "symptom": "Can’t say no, rage turns inward (depression, autoimmune issues), perfectionism + resentment", "action": "Low-Stakes Disappointment. Practice saying \"no\" to something small (e.g., declining a receipt, choosing a different restaurant than your friend) to teach your nervous system that you are safe even if you aren't compliant."},
     {"name": "Frozen Grief / Uncried Tears", "root": "Was not allowed to cry or grieve (death, divorce, abuse, moves) → emotions got locked in the body", "symptom": "Sudden crying spells decades later, unexplained sadness, psychosomatic pain, “emotional constipation”", "action": "Scheduled Grief. Set a timer for 10 minutes to sit in silence, listen to sad music, or look at a photo, specifically allowing the feeling to rise. When the timer hits, get up and physically shake out your body."},
     {"name": "Abandonment Fear", "root": "Separation, divorce, or inconsistent caregivers in formative years", "symptom": "Clinginess, testing partners, staying in toxic relationships to avoid being alone, pre-emptive leaving (\"I'll leave you before you leave me\").", "action": "Self-Soothing Mantra. When panic rises, place a hand on your heart and say, \"I am here with you. I am not leaving you.\" You must become the consistent caregiver you didn't have."},
@@ -153,26 +154,16 @@ recursions = [
     {"name": "Self-Isolation", "root": "\"I'm a burden\" or \"no one understands\"", "symptom": "Deepening depression, loss of social skills, feedback loop of loneliness.", "action": "Opposite Action. If your depression says \"stay in bed,\" the opposite action is \"call a friend\" or \"go outside.\" Do the opposite of what the mood dictates."},
     {"name": "Ignoring Personal Needs", "root": "Putting others first was the only way to be \"good\" or safe", "symptom": "Physical illness, exhaustion, resentment outbursts, not knowing what one actually likes or needs.", "action": "HALT Check. Before helping anyone else, ask: Am I Hungry, Angry, Lonely, or Tired? Address your HALT first."},
     {"name": "All-or-Nothing Thinking", "root": "Viewing situations in extremes (perfect or failure) due to rigid parenting", "symptom": "Quitting a habit after one slip-up, rigid rules, judgment of self and others, inability to see nuance.", "action": "The Grey Zone. Replace \"always\" and \"never\" with \"sometimes\" and \"often.\" Allow for a partial success (e.g., a 10-minute workout is better than 0)."},
-    {"name": "Living in the Past/Ruminating", "root": "Dwelling on past mistakes, disappointments, or injustices", "symptom": "Bitterness, missing the present moment, re-playing old arguments, inability to move on.", "action": "Sensory Interrupt. When replaying a past argument, physically clap your hands loudly and say \"Stop.\" Then name 3 blue things in the room."},
+    {"name": "Living in the Past/Ruminating", "root": "Trauma or regret that was never processed or forgiven", "symptom": "Bitterness, missing the present moment, re-playing old arguments, inability to move on.", "action": "Sensory Interrupt. When replaying a past argument, physically clap your hands loudly and say \"Stop.\" Then name 3 blue things in the room."},
     {"name": "Focusing on What is Lacking", "root": "Concentrating on inadequacies (e.g., lack of time, money, skills) instead of leveraging existing strengths and opportunities", "symptom": "Chronic pessimism, ungratefulness, jealousy/envy, inability to enjoy success.", "action": "Gratitude Rampage. Spend 60 seconds listing everything that is working right now (lungs breathing, electricity on, coffee warm). Shift the lens."},
     {"name": "Waiting for the Perfect Time", "root": "Believing there is an ideal moment to start a new venture, which is a form of procrastination that ensures nothing ever begins", "symptom": "\"I'll do it when...\" syndrome, dreaming but not doing, life passing by while waiting for conditions to be ideal.", "action": "Imperfect Action. Do the thing badly today rather than perfectly tomorrow. Start the project with a messy draft."},
     {"name": "Comparison Trap", "root": "Being constantly compared to siblings/peers by parents or teachers", "symptom": "Feeling behind in life, bitterness toward others' success, diminishing own achievements.", "action": "Compare to Past Self. Only compare who you are today to who you were last year. Are you kinder? wiser? stronger? That is the only metric that matters."},
     {"name": "Scarcity / Deprivation Loop", "root": "Growing up with “there’s never enough” (money, food, love, time, attention)", "symptom": "Hoarding, under-charging, inability to receive, saying \"it’s fine\" when it’s not", "action": "Notice one thing you have in abundance (air, sunlight) and feel grateful."},
     {"name": "Good-Girl / Good-Boy Syndrome", "root": "Survival depended on being obedient, quiet, helpful, never angry, never needy", "symptom": "Can’t say no, rage turns inward (depression, autoimmune issues), perfectionism + resentment", "action": "Practice small safe 'no's daily."},
-    {"name": "Frozen Grief / Uncried Tears", "root": "Was not allowed to cry or grieve (death, divorce, abuse, moves) → emotions locked in the body", "symptom": "Sudden crying spells decades later, unexplained sadness, psychosomatic pain", "action": "Scheduled Grief + shake out."}
+    {"name": "Frozen Grief / Uncried Tears", "root": "Was not allowed to cry or grieve (death, divorce, abuse, moves) → emotions got locked in the body", "symptom": "Sudden crying spells decades later, unexplained sadness, psychosomatic pain", "action": "Scheduled Grief + shake out."}
 ]
 
-# Element Groups
-element_groups = {
-    "Vitality": questions[0:10],
-    "Connection": questions[10:20],
-    "Environment": questions[20:30],
-    "Growth": questions[30:40],
-    "Stability": questions[40:50],
-    "Meaning": questions[50:60],
-    "Recursion": questions[60:70]
-}
-
+# Calculate element scores
 def calculate_element_scores(responses):
     scores = {}
     for el, qs in element_groups.items():
@@ -180,141 +171,136 @@ def calculate_element_scores(responses):
         total = count = 0
         for q in qs:
             val = responses.get(str(q["id"]))
-            if val:
-                idx = q["options"].index(val)
-                negative = any(word in q["text"].lower() for word in ["pain", "exhaustion", "unable", "lack", "left out", "negatively", "clutter", "poor", "never", "worry", "stressed", "interfere"])
-                val_num = len(q["options"]) - 1 - idx if negative else idx
-                total += val_num
-                count += 1
-        scores[el] = round((total / (count * (len(q["options"]) - 1)) * 100) if count else 50
+            if not val: continue
+            idx = q["options"].index(val)
+            negative = any(k in q["text"].lower() for k in ["pain","exhaustion","unable","lack","left out","negatively","clutter","poor","never","worry","stressed","interfere"])
+            val_num = len(q["options"]) - 1 - idx if negative else idx
+            total += val_num
+            count += 1
+        max_val = len(q["options"]) - 1 if count else 1
+        scores[el] = round((total / (count * max_val)) * 100) if count else 50
     return scores
 
+# Detect top 3 patterns from 50
 def detect_recursions(responses, scores):
     ace = sum(1 for i in range(61,68) if responses.get(str(i)) == "Yes")
     emo_neglect = ["Never true","Rarely true","Sometimes true","Often true","Very often true"].index(responses.get("71","Rarely true"))
     phys_abuse = ["Never true","Rarely true","Sometimes true","Often true","Very often true"].index(responses.get("72","Rarely true"))
     fin_struggle = ["Never true","Rarely true","Sometimes true","Often true","Very often true"].index(responses.get("76","Rarely true"))
-
-    v = scores.get("Vitality", 50)
-    c = scores.get("Connection", 50)
-    e = scores.get("Environment", 50)
-    g = scores.get("Growth", 50)
-    s = scores.get("Stability", 50)
-    m = scores.get("Meaning", 50)
+    v,c,e,g,s,m = (scores.get(k,50) for k in ["Vitality","Connection","Environment","Growth","Stability","Meaning"])
 
     candidates = []
     for pattern in recursions:
-        strength = 0
-        # Pattern-specific formulas (base on trauma + element penalties)
-        if pattern["name"] == "Fixed Mindset":
-            strength = 40 + emo_neglect*5 + (100 - g)*0.7 + (100 - m)*0.3
-        elif pattern["name"] == "Good-Child Syndrome":
-            strength = 40 + emo_neglect*10 + (100 - c)*0.5 + (100 - v)*0.3
-        elif pattern["name"] == "Frozen Grief / Uncried Tears":
-            strength = 40 + emo_neglect*8 + phys_abuse*5 + (100 - v)*0.6 + (100 - m)*0.4
-        elif pattern["name"] == "Abandonment Fear":
-            strength = 40 + ace*8 + emo_neglect*5 + (100 - c)*0.8 + (100 - m)*0.6
-        elif pattern["name"] == "Emotional Neglect Echo":
-            strength = 40 + emo_neglect*10 + (100 - m)*0.5 + (100 - v)*0.3
-        elif pattern["name"] == "Trust Deficit":
-            strength = 40 + ace*10 + (100 - c)*0.5 + (100 - e)*0.3
-        elif pattern["name"] == "Self-Worth Wound":
-            strength = 40 + emo_neglect*8 + phys_abuse*8 + (100 - g)*0.5 + (100 - v)*0.3
-        elif pattern["name"] == "Chaos Adaptation":
-            strength = 40 + fin_struggle*8 + ace*8 + (100 - s)*0.5 + (100 - e)*0.3
-        elif pattern["name"] == "Perfectionism Trap":
-            strength = 40 + emo_neglect*7 + phys_abuse*5 + (100 - g)*0.5 + (100 - s)*0.3
-        elif pattern["name"] == "Failure Aversion":
-            strength = 40 + phys_abuse*10 + fin_struggle*5 + (100 - g)*0.5 + (100 - s)*0.3
-        elif pattern["name"] == "Identity Confusion":
-            strength = 40 + emo_neglect*8 + ace*6 + (100 - m)*0.5 + (100 - g)*0.3
-        elif pattern["name"] == "Emotional Suppression":
-            strength = 40 + emo_neglect*10 + phys_abuse*5 + (100 - v)*0.5 + (100 - c)*0.3
-        elif pattern["name"] == "Financial Anxiety Loop":
-            strength = 40 + fin_struggle*10 + ace*5 + (100 - s)*0.5 + (100 - g)*0.3
-        elif pattern["name"] == "People-Pleasing Circuit":
-            strength = 40 + emo_neglect*10 + (100 - c)*0.5 + (100 - g)*0.3
-        elif pattern["name"] == "Hyper-Independence":
-            strength = 40 + emo_neglect*8 + ace*7 + (100 - c)*0.5
-        elif pattern["name"] == "Guilt-Shame Spiral":
-            strength = 40 + emo_neglect*9 + phys_abuse*6 + (100 - g)*0.5
-        elif pattern["name"] == "Catastrophizing Habit":
-            strength = 40 + ace*8 + phys_abuse*6 + (100 - v)*0.5
-        elif pattern["name"] == "Chronic Self-Doubt":
-            strength = 40 + emo_neglect*10 + (100 - g)*0.6
-        elif pattern["name"] == "Boundary Collapse":
-            strength = 40 + emo_neglect*8 + (100 - c)*0.6
-        elif pattern["name"] == "Savior Complex":
-            strength = 40 + emo_neglect*7 + (100 - g)*0.5 + (100 - c)*0.3
-        elif pattern["name"] == "Impostor Syndrome":
-            strength = 40 + emo_neglect*8 + (100 - g)*0.6
-        elif pattern["name"] == "Rejection Sensitivity":
-            strength = 40 + ace*7 + emo_neglect*5 + (100 - c)*0.6
-        elif pattern["name"] == "Control Obsession":
-            strength = 40 + ace*8 + (100 - s)*0.6
-        elif pattern["name"] == "Numbness / Dissociation Loop":
-            strength = 40 + phys_abuse*10 + emo_neglect*7 + (100 - v)*0.6
-        elif pattern["name"] == "Approval Addiction":
-            strength = 40 + emo_neglect*9 + (100 - c)*0.5
-        elif pattern["name"] == "Chronic Over-Responsibility":
-            strength = 40 + emo_neglect*8 + (100 - g)*0.5
-        elif pattern["name"] == "Self-Sabotage Pattern":
-            strength = 40 + ace*6 + phys_abuse*8 + (100 - g)*0.6
-        elif pattern["name"] == "Existential Emptiness":
-            strength = 40 + emo_neglect*7 + (100 - m)*0.7
-        elif pattern["name"] == "Fear of Success":
-            strength = 40 + ace*6 + (100 - g)*0.6
-        elif pattern["name"] == "Fear of Rejection":
-            strength = 40 + ace*7 + (100 - c)*0.6
-        elif pattern["name"] == "Fear of Making Wrong Decision":
-            strength = 40 + phys_abuse*8 + (100 - g)*0.6
-        elif pattern["name"] == "Fear of Other People's Opinions":
-            strength = 40 + emo_neglect*8 + (100 - c)*0.5
-        elif pattern["name"] == "Fear of Responsibility":
-            strength = 40 + emo_neglect*6 + (100 - s)*0.6
-        elif pattern["name"] == "Fear of Commitment":
-            strength = 40 + ace*7 + (100 - s)*0.6
-        elif pattern["name"] == "Fear of Unknown/Change":
-            strength = 40 + ace*8 + (100 - g)*0.5
-        elif pattern["name"] == "Fear of Vulnerability":
-            strength = 40 + emo_neglect*8 + (100 - c)*0.6
-        elif pattern["name"] == "Fear of Conflict":
-            strength = 40 + phys_abuse*7 + (100 - c)*0.5
-        elif pattern["name"] == "Procrastination":
-            strength = 40 + emo_neglect*7 + (100 - g)*0.6
-        elif pattern["name"] == "Negative Self-Talk":
-            strength = 40 + emo_neglect*9 + (100 - v)*0.5
-        elif pattern["name"] == "Blaming Others/Circumstances":
-            strength = 40 + emo_neglect*6 + (100 - g)*0.5
-        elif pattern["name"] == "Lack of Prioritization":
-            strength = 40 + emo_neglect*5 + (100 - g)*0.5
-        elif pattern["name"] == "Mindless Consumption/Distraction":
-            strength = 40 + emo_neglect*6 + (100 - v)*0.5
-        elif pattern["name"] == "Overcommitment (FOMO)":
-            strength = 40 + emo_neglect*5 + (100 - s)*0.5
-        elif pattern["name"] == "Self-Isolation":
-            strength = 40 + emo_neglect*7 + (100 - c)*0.5
-        elif pattern["name"] == "Ignoring Personal Needs":
-            strength = 40 + emo_neglect*8 + (100 - v)*0.5
-        elif pattern["name"] == "All-or-Nothing Thinking":
-            strength = 40 + emo_neglect*6 + (100 - g)*0.5
-        elif pattern["name"] == "Living in the Past/Ruminating":
-            strength = 40 + emo_neglect*7 + (100 - m)*0.5
-        elif pattern["name"] == "Focusing on What is Lacking":
-            strength = 40 + fin*8 + (100 - s)*0.5
-        elif pattern["name"] == "Waiting for Perfect Time":
-            strength = 40 + emo_neglect*6 + (100 - g)*0.5
-        elif pattern["name"] == "Comparison Trap":
-            strength = 40 + emo_neglect*7 + (100 - g)*0.5
-        elif pattern["name"] == "Scarcity / Deprivation Loop":
+        strength = 40
+        if "Fixed Mindset" in pattern["name"]:
+            strength += emo_neglect * 5 + (100 - g) * 0.7 + (100 - m) * 0.3
+        elif "Good-Child" in pattern["name"]:
+            strength += emo_neglect * 10 + (100 - c) * 0.5 + (100 - v) * 0.3
+        elif "Frozen Grief" in pattern["name"]:
+            strength += emo_neglect * 8 + phys_abuse * 5 + (100 - v) * 0.6 + (100 - m) * 0.4
+        elif "Abandonment Fear" in pattern["name"]:
+            strength += ace * 8 + emo_neglect * 5 + (100 - c) * 0.8 + (100 - m) * 0.6
+        elif "Emotional Neglect Echo" in pattern["name"]:
+            strength += emo_neglect * 10 + (100 - m) * 0.5 + (100 - v) * 0.3
+        elif "Trust Deficit" in pattern["name"]:
+            strength += ace * 10 + (100 - c) * 0.5 + (100 - e) * 0.3
+        elif "Self-Worth Wound" in pattern["name"]:
+            strength += emo_neglect * 8 + phys_abuse * 8 + (100 - g) * 0.5 + (100 - v) * 0.3
+        elif "Chaos Adaptation" in pattern["name"]:
+            strength += fin_struggle * 8 + ace * 8 + (100 - s) * 0.5 + (100 - e) * 0.3
+        elif "Perfectionism Trap" in pattern["name"]:
+            strength += emo_neglect * 7 + phys_abuse * 5 + (100 - g) * 0.5 + (100 - s) * 0.3
+        elif "Failure Aversion" in pattern["name"]:
+            strength += phys_abuse * 10 + fin_struggle * 5 + (100 - g) * 0.5 + (100 - s) * 0.3
+        elif "Identity Confusion" in pattern["name"]:
+            strength += emo_neglect * 8 + ace * 6 + (100 - m) * 0.5 + (100 - g) * 0.3
+        elif "Emotional Suppression" in pattern["name"]:
+            strength += emo_neglect * 10 + phys_abuse * 5 + (100 - v) * 0.5 + (100 - c) * 0.3
+        elif "Financial Anxiety Loop" in pattern["name"]:
+            strength += fin_struggle * 10 + ace * 5 + (100 - s) * 0.5 + (100 - g) * 0.3
+        elif "People-Pleasing Circuit" in pattern["name"]:
+            strength += emo_neglect * 10 + (100 - c) * 0.5 + (100 - g) * 0.3
+        elif "Hyper-Independence" in pattern["name"]:
+            strength += ace * 7 + emo_neglect * 7 + (100 - c) * 0.5
+        elif "Guilt-Shame Spiral" in pattern["name"]:
+            strength += emo_neglect * 9 + phys_abuse * 6 + (100 - g) * 0.5
+        elif "Catastrophizing Habit" in pattern["name"]:
+            strength += ace * 8 + phys_abuse * 6 + (100 - v) * 0.5
+        elif "Chronic Self-Doubt" in pattern["name"]:
+            strength += emo_neglect * 10 + (100 - g) * 0.6
+        elif "Boundary Collapse" in pattern["name"]:
+            strength += emo_neglect * 8 + (100 - c) * 0.6
+        elif "Savior Complex" in pattern["name"]:
+            strength += emo_neglect * 7 + (100 - g) * 0.5 + (100 - c) * 0.3
+        elif "Impostor Syndrome" in pattern["name"]:
+            strength += emo_neglect * 8 + (100 - g) * 0.6
+        elif "Rejection Sensitivity" in pattern["name"]:
+            strength += ace * 7 + emo_neglect * 5 + (100 - c) * 0.6
+        elif "Control Obsession" in pattern["name"]:
+            strength += ace * 8 + (100 - s) * 0.6
+        elif "Numbness / Dissociation Loop" in pattern["name"]:
+            strength += phys_abuse * 10 + emo_neglect * 7 + (100 - v) * 0.6
+        elif "Approval Addiction" in pattern["name"]:
+            strength += emo_neglect * 9 + (100 - c) * 0.5
+        elif "Chronic Over-Responsibility" in pattern["name"]:
+            strength += emo_neglect * 8 + (100 - g) * 0.5
+        elif "Self-Sabotage Pattern" in pattern["name"]:
+            strength += ace * 6 + phys_abuse * 8 + (100 - g) * 0.6
+        elif "Existential Emptiness" in pattern["name"]:
+            strength += emo_neglect * 7 + (100 - m) * 0.7
+        elif "Fear of Success" in pattern["name"]:
+            strength += ace * 6 + (100 - g) * 0.6
+        elif "Fear of Rejection" in pattern["name"]:
+            strength += ace * 7 + (100 - c) * 0.6
+        elif "Fear of Making Wrong Decision" in pattern["name"]:
+            strength += phys_abuse * 8 + (100 - g) * 0.6
+        elif "Fear of Other People's Opinions" in pattern["name"]:
+            strength += emo_neglect * 8 + (100 - c) * 0.5
+        elif "Fear of Responsibility" in pattern["name"]:
+            strength += emo_neglect * 6 + (100 - s) * 0.6
+        elif "Fear of Commitment" in pattern["name"]:
+            strength += ace * 7 + (100 - s) * 0.6
+        elif "Fear of Unknown/Change" in pattern["name"]:
+            strength += ace * 8 + (100 - g) * 0.5
+        elif "Fear of Vulnerability" in pattern["name"]:
+            strength += emo_neglect * 8 + (100 - c) * 0.6
+        elif "Fear of Conflict" in pattern["name"]:
+            strength += phys_abuse * 7 + (100 - c) * 0.5
+        elif "Procrastination" in pattern["name"]:
+            strength += emo_neglect * 7 + (100 - g) * 0.6
+        elif "Negative Self-Talk" in pattern["name"]:
+            strength += emo_neglect * 9 + (100 - v) * 0.5
+        elif "Blaming Others/Circumstances" in pattern["name"]:
+            strength += emo_neglect * 6 + (100 - g) * 0.5
+        elif "Lack of Prioritization" in pattern["name"]:
+            strength += emo_neglect * 5 + (100 - g) * 0.5
+        elif "Mindless Consumption/Distraction" in pattern["name"]:
+            strength += emo_neglect * 6 + (100 - v) * 0.5
+        elif "Overcommitment (FOMO)" in pattern["name"]:
+            strength += emo_neglect * 5 + (100 - s) * 0.5
+        elif "Self-Isolation" in pattern["name"]:
+            strength += emo_neglect * 7 + (100 - c) * 0.5
+        elif "Ignoring Personal Needs" in pattern["name"]:
+            strength += emo_neglect * 8 + (100 - v) * 0.5
+        elif "All-or-Nothing Thinking" in pattern["name"]:
+            strength += emo_neglect * 6 + (100 - g) * 0.5
+        elif "Living in the Past/Ruminating" in pattern["name"]:
+            strength += emo_neglect * 7 + (100 - m) * 0.5
+        elif "Focusing on What is Lacking" in pattern["name"]:
+            strength += fin * 8 + (100 - s) * 0.5
+        elif "Waiting for Perfect Time" in pattern["name"]:
+            strength += emo_neglect * 6 + (100 - g) * 0.5
+        elif "Comparison Trap" in pattern["name"]:
+            strength += emo_neglect * 7 + (100 - g) * 0.5
+        elif "Scarcity / Deprivation Loop" in pattern["name"]:
             strength = 40 + fin*10 + (100 - s)*0.6 + (100 - v)*0.4
-        elif pattern["name"] == "Good-Girl / Good-Boy Syndrome":
-            strength = 40 + emo_neglect*10 + (100 - c)*0.5 + (100 - g)*0.3
-        elif pattern["name"] == "Frozen Grief / Uncried Tears":
-            strength = 40 + emo_neglect*8 + phys*5 + (100 - v)*0.6 + (100 - m)*0.4
+        elif "Good-Girl / Good-Boy Syndrome" in pattern["name"]:
+            strength = 40 + emo*10 + (100 - c)*0.5 + (100 - g)*0.3
+        elif "Frozen Grief / Uncried Tears" in pattern["name"]:
+            strength = 40 + emo*8 + phys*5 + (100 - v)*0.6 + (100 - m)*0.4
 
         strength = min(100, strength)
-        if strength > 45:
+        if strength > 40:
             affected = [el for el, sc in scores.items() if sc < 65]
             candidates.append({
                 "name": pat["name"],
@@ -338,8 +324,8 @@ def assess():
         return jsonify({"error": "Please answer all 70 questions."}), 400
     scores = calculate_element_scores(data)
     recursions = detect_recursions(data, scores)
-    avg_recursion = sum(r["strength"] for r in recursions) / max(1, len(recursions))
-    return jsonify({"scores": scores, "recursions": recursions, "avg_recursion": avg_recursion})
+    avg = sum(r["strength"] for r in recursions) / max(1, len(recursions))
+    return jsonify({"scores": scores, "recursions": recursions, "avg_recursion": avg})
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
@@ -349,37 +335,43 @@ HTML_TEMPLATE = """
   <title>Latent Recursion System</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <style>
+    .tree {{ transition: all 1.5s ease; }}
+    .ring {{ transition: all 1.5s ease; }}
+    input[type="radio"]:checked + span {{
+      color: #22c55e;  /* Green for selected option */
+    }}
+  </style>
 </head>
 <body class="bg-gradient-to-br from-slate-950 to-slate-900 text-white min-h-screen">
   <div class="container mx-auto p-6 max-w-5xl">
     <h1 class="text-5xl font-bold text-center text-teal-400 mt-8 mb-2">Latent Recursion System</h1>
-    <p class="text-center text-gray-300 mb-12 text-xl">Discover hidden patterns from your past that keep you stuck today. Like an MRI scan for your life, it shows how these patterns affect your personal biome — the six key areas of your life — and provides a plan to break free and live fully.</p>
+    <p class="text-center text-gray-300 mb-12 text-xl">Discover hidden patterns from your past that keep you stuck today.</p>
     <div class="text-center mb-12">
       <div class="w-full bg-gray-800 rounded-full h-3">
         <div id="progress" class="bg-teal-500 h-3 rounded-full transition-all duration-1000" style="width:0%"></div>
       </div>
-      <p class="mt-4 text-gray-400" id="progress-text">Vitality – 0/70</p>
+      <p class="mt-4 text-gray-400" id="progress-text">0/70</p>
     </div>
     <div id="assessment" class="space-y-12"></div>
     <div id="biome-container" class="my-16 text-center hidden">
       <h2 class="text-3xl font-bold mb-8">Your Personal Biome</h2>
       <canvas id="biome" width="600" height="600" class="mx-auto border-4 border-teal-600 rounded-2xl shadow-2xl"></canvas>
-      <p class="mt-4 text-gray-400">The central orb is you. The trees represent your six life elements. The ring is your latent recursion — tight and red when it's constraining you, loose and green when resolved.</p>
     </div>
     <div id="results" class="hidden mt-12 p-8 bg-slate-800 rounded-2xl shadow-2xl space-y-8"></div>
   </div>
   <script>
     const questions = {json.dumps(questions)};
-    const order = ['Vitality','Connection','Environment','Growth','Stability','Meaning','Recursion'];
+    const order = {json.dumps(element_order)};
     let responses = {{}}, current = 0;
     let scene, camera, renderer, trees = [], ring, userFigure, currents = [];
 
     function initBiome() {{
-      const container = document.getElementById('biome');
+      const canvas = document.getElementById('biome');
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x0f172a);
       camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-      renderer = new THREE.WebGLRenderer({{canvas: container, antialias: true}});
+      renderer = new THREE.WebGLRenderer({{canvas, antialias: true}});
       renderer.setSize(600, 600);
       // Central Individual
       const geo = new THREE.DodecahedronGeometry(0.5, 0);
@@ -402,7 +394,7 @@ HTML_TEMPLATE = """
       userFigure.rotation.y += 0.01;
       renderer.render(scene, camera);
     }}
-    function updateBiome(scores, avg_recursion) {{
+    function updateBiome(scores, avg_recursion, affected) {{
       trees.forEach(t => scene.remove(t));
       trees = [];
       currents.forEach(c => scene.remove(c));
@@ -435,8 +427,16 @@ HTML_TEMPLATE = """
         sprite.position.set(c.x, h + 1, 0);
         sprite.scale.set(3, 0.75, 1);
         scene.add(sprite);
+        // Red current if affected
+        if (affected.includes(c.el)) {{
+          const currentGeo = new THREE.CylinderGeometry(0.1, 0.1, 4, 8);
+          const currentMat = new THREE.MeshBasicMaterial({{color: 0xff0000}});
+          const current = new THREE.Mesh(currentGeo, currentMat);
+          current.position.set(c.x, 0, 0);
+          scene.add(current);
+          currents.push(current);
+        }}
       }});
-      // Update ring
       const constriction = avg_recursion / 100;
       ring.scale.set(1 + constriction, 1 + constriction, 1);
       ring.material.color.setHex(constriction > 0.5 ? 0xff0000 : 0x00ff66);
@@ -498,48 +498,5 @@ HTML_TEMPLATE = """
         updateBiome(data.scores, data.avg_recursion);
         let html = `<h2 class="text-4xl font-bold text-center text-teal-400 mb-8">Your Top 3 Latent Recursions</h2>`;
         if (data.recursions[0].strength === 0) {{
-          html += `<p class="text-xl text-center text-green-400">No major recursion detected. Your biome is free to expand.</p>`;
-        }} else {{
-          data.recursions.forEach((r, i) => {{
-            html += `
-              <div class="p-6 bg-red-950/50 rounded-xl border border-red-600">
-                <p class="text-2xl font-bold">${{i+1}}. ${{r.name}}</p>
-                <p class="text-4xl font-bold text-red-400 mb-4">${{r.strength}}%</p>
-                <p class="text-lg">${{r.description}}</p>
-                <p class="text-sm text-gray-400 mt-4">Affected elements: ${{r.affected_elements.join(' · ')}}</p>
-              </div>`;
-          }});
-        }}
-        html += `<h2 class="text-4xl font-bold text-center text-teal-400 mb-8">Your 30-Day Transformation Plan</h2>
-        <div class="space-y-4">
-          <div class="p-4 bg-slate-800 rounded-xl">
-            <p class="font-bold">Week 1: Acknowledgement</p>
-            <p>Day 1-3: Journal one pattern from your results daily.<br>Day 4-7: Discuss with a trusted friend or note how it shows up.</p>
-          </div>
-          <div class="p-4 bg-slate-800 rounded-xl">
-            <p class="font-bold">Week 2: Analysis & Self-Awareness</p>
-            <p>Day 8-10: Map causes (e.g., "This started when...").<br>Day 11-14: Reflect on your role (e.g., "I perpetuate it by...").</p>
-          </div>
-          <div class="p-4 bg-slate-800 rounded-xl">
-            <p class="font-bold">Week 3: Acceptance & Resolution</p>
-            <p>Day 15-18: Practice acceptance (e.g., meditation on "It is what it is").<br>Day 19-21: Weigh decisions (e.g., "If I change, what happens?").</p>
-          </div>
-          <div class="p-4 bg-slate-800 rounded-xl">
-            <p class="font-bold">Week 4: Re-Design, Action, & Tracking</p>
-            <p>Day 22-25: Design new paths (e.g., "New habit: ...").<br>Day 26-30: Take daily actions and track progress in a journal.</p>
-          </div>
-        </div>`;
-        document.getElementById('results').innerHTML = html;
-        document.getElementById('results').classList.remove('hidden');
-      });
-    }
-
-    initBiome();
-    loadElement();
-  </script>
-</body>
-</html>
-"""
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+          html += `<p class="
+```
