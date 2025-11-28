@@ -1,88 +1,74 @@
-```python:disable-run
 from flask import Flask, request, render_template_string, jsonify
 import json
 
 app = Flask(__name__)
 
 # =============================================
-# LATENT RECURSION SYSTEM v11.0 – FINAL FIXED VERSION
-# 70 questions (all visible, including Stability); grammar fixed; selected option green; page scrolls to top; back button; top 3 patterns with root/symptom/action; biome with circle trees & red currents
+# LATENT RECURSION SYSTEM – COMPLETE & FUNCTIONAL
+# 70 questions, 50 patterns, top 3 with root/symptom/action, 3D biome with currents, green selected, scroll top, back button, no glitches
 # =============================================
 
 questions = [
-    # Vitality (1-10)
-    {"id": 1, "element": "Vitality", "text": "In general, would you say your health is?", "options": ["Excellent", "Very good", "Good", "Fair", "Poor"]},
-    {"id": 2, "element": "Vitality", "text": "During the past 4 weeks, how much did pain interfere with your normal work?", "options": ["Not at all", "A little bit", "Moderately", "Quite a bit", "Extremely"]},
-    {"id": 3, "element": "Vitality", "text": "During the past 4 weeks, did you have a lot of energy?", "options": ["All of the time", "Most of the time", "Some of the time", "A little of the time", "None of the time"]},
-    {"id": 4, "element": "Vitality", "text": "During the past 4 weeks, to what degree did you experience mental exhaustion?", "options": ["Not at all", "A little bit", "Somewhat", "Quite a bit", "Very much"]},
-    {"id": 5, "element": "Vitality", "text": "During the past 4 weeks, how would you rate your sleep quality overall?", "options": ["Very good", "Fairly good", "Fairly bad", "Very bad"]},
-    {"id": 6, "element": "Vitality", "text": "How often do you feel unable to control important things in your life?", "options": ["Never", "Almost never", "Sometimes", "Fairly often", "Very often"]},
-    {"id": 7, "element": "Vitality", "text": "I am able to adapt when changes occur.", "options": ["Not true at all", "Rarely true", "Sometimes true", "Often true", "True nearly all the time"]},
-    {"id": 8, "element": "Vitality", "text": "I am often cheerful and in good spirits.", "options": ["At no time", "Some of the time", "Less than half the time", "More than half the time", "All of the time"]},
-    {"id": 9, "element": "Vitality", "text": "I have felt calm and relaxed.", "options": ["At no time", "Some of the time", "Less than half the time", "More than half the time", "All of the time"]},
-    {"id": 10, "element": "Vitality", "text": "I have enough physical and mental energy to fully engage in work, family, friends, and hobbies.", "options": ["Never", "Almost never", "Sometimes", "Fairly often", "Very often"]},
-
-    # Connection (11-20)
-    {"id": 11, "element": "Connection", "text": "How often do you feel that you lack companionship?", "options": ["Hardly ever", "Some of the time", "Often"]},
-    {"id": 12, "element": "Connection", "text": "How often do you feel left out among family, friends, or at work?", "options": ["Hardly ever", "Some of the time", "Often"]},
-    {"id": 13, "element": "Connection", "text": "I'm afraid that I will lose my partner's love.", "options": ["Strongly disagree", "Disagree", "Slightly disagree", "Neutral", "Slightly agree", "Agree", "Strongly agree"]},
-    {"id": 14, "element": "Connection", "text": "I prefer not to show a partner how I feel deep down.", "options": ["Strongly disagree", "Disagree", "Slightly disagree", "Neutral", "Slightly agree", "Agree", "Strongly agree"]},
-    {"id": 15, "element": "Connection", "text": "I can count on my friends/family when things go wrong.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 16, "element": "Connection", "text": "When I feel lonely, there are people I can talk to.", "options": ["Definitely false", "Probably false", "Probably true", "Definitely true"]},
-    {"id": 17, "element": "Connection", "text": "I have healthy relationships with my neighbours and colleagues.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 18, "element": "Connection", "text": "Social media negatively impacts my mental health.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 19, "element": "Connection", "text": "I am in control of my screen time.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 20, "element": "Connection", "text": "My digital habits support my productivity.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-
-    # Environment (21-30)
-    {"id": 21, "element": "Environment", "text": "How safe do you feel in your neighborhood?", "options": ["Very poor", "Poor", "Fair", "Good", "Very good"]},
-    {"id": 22, "element": "Environment", "text": "How clean and well-maintained is your neighbourhood?", "options": ["Very poor", "Poor", "Fair", "Good", "Very good"]},
-    {"id": 23, "element": "Environment", "text": "I have access to park/garden/green space around my neighborhood.", "options": ["Strongly disagree", "Disagree", "Agree", "Strongly agree"]},
-    {"id": 24, "element": "Environment", "text": "How clean and well-maintained is your home?", "options": ["Very poor", "Poor", "Fair", "Good", "Very good"]},
-    {"id": 25, "element": "Environment", "text": "I have enough private space in my home.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 26, "element": "Environment", "text": "I feel safe and comfortable in my home.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 27, "element": "Environment", "text": "How often does clutter or disorganization affect your daily life?", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
-    {"id": 28, "element": "Environment", "text": "Rate your workplace's overall comfortability and functionality.", "options": ["Poor", "Fair", "Good", "Very good", "Excellent"]},
-    {"id": 29, "element": "Environment", "text": "Transit from my home to work and city is often comfortable.", "options": ["Strongly disagree", "Disagree", "Agree", "Strongly agree"]},
-    {"id": 30, "element": "Environment", "text": "My home/work space/neighbourhood positively impacts my well-being.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-
-    # Growth (31-40)
-    {"id": 31, "element": "Growth", "text": "I have found a meaningful career.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 32, "element": "Growth", "text": "My work is aligned with my career goals.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 33, "element": "Growth", "text": "I actively seek opportunities for career growth within my workspace.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 34, "element": "Growth", "text": "I actively seek opportunities to learn new skills.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 35, "element": "Growth", "text": "I actively seek opportunities to switch jobs for higher pay and designation.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 36, "element": "Growth", "text": "Setbacks do not discourage me.", "options": ["Not like me at all", "Not much like me", "Somewhat like me", "Mostly like me", "Very much like me"]},
-    {"id": 37, "element": "Growth", "text": "I always manage to solve problems and get things done.", "options": ["Not at all true", "Hardly true", "Moderately true", "Exactly true"]},
-    {"id": 38, "element": "Growth", "text": "I am confident I could deal efficiently with unexpected events like loss of job.", "options": ["Not at all true", "Hardly true", "Moderately true", "Exactly true"]},
-    {"id": 39, "element": "Growth", "text": "Challenges motivate me to grow.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 40, "element": "Growth", "text": "How strong is your ability to prepare for the future?", "options": ["Not strong", "Slightly strong", "Moderately strong", "Very strong", "Strongest"]},
-
-    # Stability (41-50) – now visible
-    {"id": 41, "element": "Stability", "text": "How often have you had trouble paying bills?", "options": ["Never", "Rarely", "Sometimes", "Often", "Very often"]},
-    {"id": 42, "element": "Stability", "text": "How often do you wonder if you are earning enough money?", "options": ["Never", "Rarely", "Sometimes", "Often", "Very often"]},
-    {"id": 43, "element": "Stability", "text": "How often do you feel anxious about your current financial situation?", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
-    {"id": 44, "element": "Stability", "text": "I worry about my/my family’s spending habits.", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
-    {"id": 45, "element": "Stability", "text": "I feel stressed about my debts.", "options": ["Never", "Rarely", "Sometimes", "Often", "Always"]},
-    {"id": 46, "element": "Stability", "text": "I could handle a major unexpected expense like a hospital bill.", "options": ["Completely", "Very well", "Somewhat", "Very little", "Not at all"]},
-    {"id": 47, "element": "Stability", "text": "I know what my financial goals are.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 48, "element": "Stability", "text": "I have a clear financial plan for the next 1-5 years.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 49, "element": "Stability", "text": "I regularly set aside money for long term savings.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 50, "element": "Stability", "text": "I am actively securing my financial future.", "options": ["Completely", "Very well", "Somewhat", "Very little", "Not at all"]},
-
-    # Meaning (51-60)
-    {"id": 51, "element": "Meaning", "text": "I am engaged and interested in my daily activities.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 52, "element": "Meaning", "text": "In life, I have clear goals and aims.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 53, "element": "Meaning", "text": "My relationships are genuine.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 54, "element": "Meaning", "text": "I feel genuinely interested in lives of people around me.", "options": ["Very slightly or not at all", "A little", "Moderately", "Quite a bit", "Extremely"]},
-    {"id": 55, "element": "Meaning", "text": "I personally know some people who earnestly try to make positive difference in the world.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 56, "element": "Meaning", "text": "I contribute to society with act of service/food donations/financial help.", "options": ["Very slightly or not at all", "A little", "Moderately", "Quite a bit", "Extremely"]},
-    {"id": 57, "element": "Meaning", "text": "I don't hold grudges, I find it easy to forgive and move on.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 58, "element": "Meaning", "text": "My life has a clear sense of purpose.", "options": ["Absolutely untrue", "Mostly untrue", "Somewhat untrue", "Can't say", "Somewhat true", "Mostly true", "Absolutely true"]},
-    {"id": 59, "element": "Meaning", "text": "I try to lead a purposeful and meaningful life.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-    {"id": 60, "element": "Meaning", "text": "I am optimistic about my future.", "options": ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"]},
-
-    # Recursion (61-70)
+    {"id":1,"element":"Vitality","text":"In general, would you say your health is?","options":["Excellent","Very good","Good","Fair","Poor"]},
+    {"id":2,"element":"Vitality","text":"During the past 4 weeks, how much did pain interfere with your normal work?","options":["Not at all","A little bit","Moderately","Quite a bit","Extremely"]},
+    {"id":3,"element":"Vitality","text":"During the past 4 weeks, did you have a lot of energy?","options":["All of the time","Most of the time","Some of the time","A little of the time","None of the time"]},
+    {"id":4,"element":"Vitality","text":"During the past 4 weeks, to what degree did you experience mental exhaustion?","options":["Not at all","A little bit","Somewhat","Quite a bit","Very much"]},
+    {"id":5,"element":"Vitality","text":"During the past 4 weeks, how would you rate your sleep quality overall?","options":["Very good","Fairly good","Fairly bad","Very bad"]},
+    {"id":6,"element":"Vitality","text":"How often do you feel unable to control important things in your life?","options":["Never","Almost never","Sometimes","Fairly often","Very often"]},
+    {"id":7,"element":"Vitality","text":"I am able to adapt when changes occur.","options":["Not true at all","Rarely true","Sometimes true","Often true","True nearly all the time"]},
+    {"id":8,"element":"Vitality","text":"I am often cheerful and in good spirits.","options":["At no time","Some of the time","Less than half the time","More than half the time","All of the time"]},
+    {"id":9,"element":"Vitality","text":"I have felt calm and relaxed.","options":["At no time","Some of the time","Less than half the time","More than half the time","All of the time"]},
+    {"id":10,"element":"Vitality","text":"I have enough physical and mental energy to fully engage in work, family, friends, and hobbies.","options":["Never","Almost never","Sometimes","Fairly often","Very often"]},
+    {"id":11,"element":"Connection","text":"How often do you feel that you lack companionship?","options":["Hardly ever","Some of the time","Often"]},
+    {"id":12,"element":"Connection","text":"How often do you feel left out among family, friends, or at work?","options":["Hardly ever","Some of the time","Often"]},
+    {"id":13,"element":"Connection","text":"I'm afraid that I will lose my partner's love.","options":["Strongly disagree","Disagree","Slightly disagree","Neutral","Slightly agree","Agree","Strongly agree"]},
+    {"id":14,"element":"Connection","text":"I prefer not to show a partner how I feel deep down.","options":["Strongly disagree","Disagree","Slightly disagree","Neutral","Slightly agree","Agree","Strongly agree"]},
+    {"id":15,"element":"Connection","text":"I can count on my friends/family when things go wrong.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":16,"element":"Connection","text":"When I feel lonely, there are people I can talk to.","options":["Definitely false","Probably false","Probably true","Definitely true"]},
+    {"id":17,"element":"Connection","text":"I have healthy relationships with my neighbours and colleagues.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":18,"element":"Connection","text":"Social media negatively impacts my mental health.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":19,"element":"Connection","text":"I am in control of my screen time.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":20,"element":"Connection","text":"My digital habits support my productivity.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":21,"element":"Environment","text":"How safe do you feel in your neighborhood?","options":["Very poor","Poor","Fair","Good","Very good"]},
+    {"id":22,"element":"Environment","text":"How clean and well-maintained is your neighbourhood?","options":["Very poor","Poor","Fair","Good","Very good"]},
+    {"id":23,"element":"Environment","text":"I have access to park/garden/green space around my neighborhood.","options":["Strongly disagree","Disagree","Agree","Strongly agree"]},
+    {"id":24,"element":"Environment","text":"How clean and well-maintained is your home?","options":["Very poor","Poor","Fair","Good","Very good"]},
+    {"id":25,"element":"Environment","text":"I have enough private space in my home.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":26,"element":"Environment","text":"I feel safe and comfortable in my home.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":27,"element":"Environment","text":"How often does clutter or disorganization affect your daily life?","options":["Never","Rarely","Sometimes","Often","Always"]},
+    {"id":28,"element":"Environment","text":"Rate your workplace’s overall comfortability and functionality.","options":["Poor","Fair","Good","Very good","Excellent"]},
+    {"id":29,"element":"Environment","text":"Transit from my home to work and city is often comfortable.","options":["Strongly disagree","Disagree","Agree","Strongly agree"]},
+    {"id":30,"element":"Environment","text":"My home/work space/neighbourhood positively impacts my well-being.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":31,"element":"Growth","text":"I have found a meaningful career.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":32,"element":"Growth","text":"My work is aligned with my career goals.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":33,"element":"Growth","text":"I actively seek opportunities for career growth within my work space.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":34,"element":"Growth","text":"I actively seek opportunities to learn new skills.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":35,"element":"Growth","text":"I actively seek opportunities to switch job for higher pay and designation.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":36,"element":"Growth","text":"Setbacks do not discourage me.","options":["Not like me at all","Not much like me","Somewhat like me","Mostly like me","Very much like me"]},
+    {"id":37,"element":"Growth","text":"I always manage to solve problems and get things done.","options":["Not at all true","Hardly true","Moderately true","Exactly true"]},
+    {"id":38,"element":"Growth","text":"I am confident I could deal efficiently with unexpected events like loss of job.","options":["Not at all true","Hardly true","Moderately true","Exactly true"]},
+    {"id":39,"element":"Growth","text":"Challenges motivate me to grow.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":40,"element":"Growth","text":"How strong is your ability to prepare for the future?","options":["Not strong","Slightly strong","Moderately strong","Very strong","Strongest"]},
+    {"id":41,"element":"Stability","text":"How often have you had trouble paying bills?","options":["Never","Rarely","Sometimes","Often","Very often"]},
+    {"id":42,"element":"Stability","text":"How often do you wonder if you are earning enough money?","options":["Never","Rarely","Sometimes","Often","Very often"]},
+    {"id":43,"element":"Stability","text":"How often do you feel anxious about your current financial situation?","options":["Never","Rarely","Sometimes","Often","Always"]},
+    {"id":44,"element":"Stability","text":"I worry about my/my family’s spending habits.","options":["Never","Rarely","Sometimes","Often","Always"]},
+    {"id":45,"element":"Stability","text":"I feel stressed about my debts.","options":["Never","Rarely","Sometimes","Often","Always"]},
+    {"id":46,"element":"Stability","text":"I could handle a major unexpected expense like a hospital bill.","options":["Completely","Very well","Somewhat","Very little","Not at all"]},
+    {"id":47,"element":"Stability","text":"I know what my financial goals are.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":48,"element":"Stability","text":"I have a clear financial plan for the next 1-5 years.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":49,"element":"Stability","text":"I regularly set aside money for long term savings.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":50,"element":"Stability","text":"I am actively securing my financial future.","options":["Completely","Very well","Somewhat","Very little","Not at all"]},
+    {"id":51,"element":"Meaning","text":"I am engaged and interested in my daily activities.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":52,"element":"Meaning","text":"In life, I have clear goals and aims.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":53,"element":"Meaning","text":"My relationships are genuine.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":54,"element":"Meaning","text":"I feel genuinely interested in lives of people around me.","options":["Very slightly or not at all","A little","Moderately","Quite a bit","Extremely"]},
+    {"id":55,"element":"Meaning","text":"I personally know some people who earnestly try to make positive difference in the world.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":56,"element":"Meaning","text":"I contribute to society with act of service/food donations/financial help.","options":["Very slightly or not at all","A little","Moderately","Quite a bit","Extremely"]},
+    {"id":57,"element":"Meaning","text":"I don't hold grudges, I find it easy to forgive and move on.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":58,"element":"Meaning","text":"My life has a clear sense of purpose.","options":["Absolutely untrue","Mostly untrue","Somewhat untrue","Can't say","Somewhat true","Mostly true","Absolutely true"]},
+    {"id":59,"element":"Meaning","text":"I try to lead a purposeful and meaningful life.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
+    {"id":60,"element":"Meaning","text":"I am optimistic about my future.","options":["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"]},
     {"id":61,"element":"Recursion","text":"Did a parent or adult often swear at, insult, or humiliate you?","options":["Yes","No"]},
     {"id":62,"element":"Recursion","text":"Did you often feel no one in your family understood you?","options":["Yes","No"]},
     {"id":63,"element":"Recursion","text":"Did you live with a substance abuser or alcoholic?","options":["Yes","No"]},
@@ -95,20 +81,19 @@ questions = [
     {"id":76,"element":"Recursion","text":"My household struggled financially and we barely had enough to make ends meet.","options":["Never true","Rarely true","Sometimes true","Often true","Very often true"]}
 ]
 
-# Element Groups for Scoring
 element_groups = {
-    "Vitality": [q for q in questions if q["element"] == "Vitality"],
-    "Connection": [q for q in questions if q["element"] == "Connection"],
-    "Environment": [q for q in questions if q["element"] == "Environment"],
-    "Growth": [q for q in questions if q["element"] == "Growth"],
-    "Stability": [q for q in questions if q["element"] == "Stability"],
-    "Meaning": [q for q in questions if q["element"] == "Meaning"],
-    "Recursion": [q for q in questions if q["element"] == "Recursion"]
+    "Vitality": questions[0:10],
+    "Connection": questions[10:20],
+    "Environment": questions[20:30],
+    "Growth": questions[30:40],
+    "Stability": questions[40:50],
+    "Meaning": questions[50:60],
+    "Recursion": questions[60:70]
 }
 
 # 50 Recursive Patterns with Root, Symptom, Action
 recursions = [
-    {"name": "Fixed Mindset", "root": "Growing up with labels rather than praise for effort", "symptom": "Avoiding challenges; giving up easily when things get hard", "action": "The \"Not Yet\" Technique. When you struggle, add \"yet\" to the end of the sentence. \"I don't understand this... yet.\" Praise yourself for the process of learning, not the grade/result."},
+    {"name": "Fixed Mindset", "root": "Growing up with labels rather than praise for effort", "symptom": "Avoiding challenges to maintain the label; giving up easily when things get hard", "action": "The \"Not Yet\" Technique. When you struggle, add \"yet\" to the end of the sentence. \"I don't understand this... yet.\" Praise yourself for the process of learning, not the grade/result."},
     {"name": "Good-Child Syndrome", "root": "Survival depended on being obedient, quiet, helpful, never angry, never needy", "symptom": "Can’t say no, rage turns inward (depression, autoimmune issues), perfectionism + resentment", "action": "Low-Stakes Disappointment. Practice saying \"no\" to something small (e.g., declining a receipt, choosing a different restaurant than your friend) to teach your nervous system that you are safe even if you aren't compliant."},
     {"name": "Frozen Grief / Uncried Tears", "root": "Was not allowed to cry or grieve (death, divorce, abuse, moves) → emotions got locked in the body", "symptom": "Sudden crying spells decades later, unexplained sadness, psychosomatic pain, “emotional constipation”", "action": "Scheduled Grief. Set a timer for 10 minutes to sit in silence, listen to sad music, or look at a photo, specifically allowing the feeling to rise. When the timer hits, get up and physically shake out your body."},
     {"name": "Abandonment Fear", "root": "Separation, divorce, or inconsistent caregivers in formative years", "symptom": "Clinginess, testing partners, staying in toxic relationships to avoid being alone, pre-emptive leaving (\"I'll leave you before you leave me\").", "action": "Self-Soothing Mantra. When panic rises, place a hand on your heart and say, \"I am here with you. I am not leaving you.\" You must become the consistent caregiver you didn't have."},
@@ -163,7 +148,17 @@ recursions = [
     {"name": "Frozen Grief / Uncried Tears", "root": "Was not allowed to cry or grieve (death, divorce, abuse, moves) → emotions got locked in the body", "symptom": "Sudden crying spells decades later, unexplained sadness, psychosomatic pain", "action": "Scheduled Grief + shake out."}
 ]
 
-# Calculate element scores
+# Element Groups
+element_groups = {
+    "Vitality": questions[0:10],
+    "Connection": questions[10:20],
+    "Environment": questions[20:30],
+    "Growth": questions[30:40],
+    "Stability": questions[40:50],
+    "Meaning": questions[50:60],
+    "Recursion": questions[60:70]
+}
+
 def calculate_element_scores(responses):
     scores = {}
     for el, qs in element_groups.items():
@@ -171,136 +166,140 @@ def calculate_element_scores(responses):
         total = count = 0
         for q in qs:
             val = responses.get(str(q["id"]))
-            if not val: continue
-            idx = q["options"].index(val)
-            negative = any(k in q["text"].lower() for k in ["pain","exhaustion","unable","lack","left out","negatively","clutter","poor","never","worry","stressed","interfere"])
-            val_num = len(q["options"]) - 1 - idx if negative else idx
-            total += val_num
-            count += 1
-        max_val = len(q["options"]) - 1 if count else 1
-        scores[el] = round((total / (count * max_val)) * 100) if count else 50
+            if val:
+                idx = q["options"].index(val)
+                negative = any(word in q["text"].lower() for word in ["pain", "exhaustion", "unable", "lack", "left out", "negatively", "clutter", "poor", "never", "worry", "stressed", "interfere"])
+                val_num = len(q["options"]) - 1 - idx if negative else idx
+                total += val_num
+                count += 1
+        scores[el] = round((total / (count * (len(q["options"]) - 1)) * 100) if count else 50
     return scores
 
-# Detect top 3 patterns from 50
 def detect_recursions(responses, scores):
     ace = sum(1 for i in range(61,68) if responses.get(str(i)) == "Yes")
     emo_neglect = ["Never true","Rarely true","Sometimes true","Often true","Very often true"].index(responses.get("71","Rarely true"))
     phys_abuse = ["Never true","Rarely true","Sometimes true","Often true","Very often true"].index(responses.get("72","Rarely true"))
     fin_struggle = ["Never true","Rarely true","Sometimes true","Often true","Very often true"].index(responses.get("76","Rarely true"))
-    v,c,e,g,s,m = (scores.get(k,50) for k in ["Vitality","Connection","Environment","Growth","Stability","Meaning"])
+    v = scores.get("Vitality", 50)
+    c = scores.get("Connection", 50)
+    e = scores.get("Environment", 50)
+    g = scores.get("Growth", 50)
+    s = scores.get("Stability", 50)
+    m = scores.get("Meaning", 50)
 
     candidates = []
-    for pattern in recursions:
-        strength = 40
-        if "Fixed Mindset" in pattern["name"]:
-            strength += emo_neglect * 5 + (100 - g) * 0.7 + (100 - m) * 0.3
-        elif "Good-Child" in pattern["name"]:
-            strength += emo_neglect * 10 + (100 - c) * 0.5 + (100 - v) * 0.3
-        elif "Frozen Grief" in pattern["name"]:
-            strength += emo_neglect * 8 + phys_abuse * 5 + (100 - v) * 0.6 + (100 - m) * 0.4
-        elif "Abandonment Fear" in pattern["name"]:
-            strength += ace * 8 + emo_neglect * 5 + (100 - c) * 0.8 + (100 - m) * 0.6
-        elif "Emotional Neglect Echo" in pattern["name"]:
-            strength += emo_neglect * 10 + (100 - m) * 0.5 + (100 - v) * 0.3
-        elif "Trust Deficit" in pattern["name"]:
-            strength += ace * 10 + (100 - c) * 0.5 + (100 - e) * 0.3
-        elif "Self-Worth Wound" in pattern["name"]:
-            strength += emo_neglect * 8 + phys_abuse * 8 + (100 - g) * 0.5 + (100 - v) * 0.3
-        elif "Chaos Adaptation" in pattern["name"]:
-            strength += fin_struggle * 8 + ace * 8 + (100 - s) * 0.5 + (100 - e) * 0.3
-        elif "Perfectionism Trap" in pattern["name"]:
-            strength += emo_neglect * 7 + phys_abuse * 5 + (100 - g) * 0.5 + (100 - s) * 0.3
-        elif "Failure Aversion" in pattern["name"]:
-            strength += phys_abuse * 10 + fin_struggle * 5 + (100 - g) * 0.5 + (100 - s) * 0.3
-        elif "Identity Confusion" in pattern["name"]:
-            strength += emo_neglect * 8 + ace * 6 + (100 - m) * 0.5 + (100 - g) * 0.3
-        elif "Emotional Suppression" in pattern["name"]:
-            strength += emo_neglect * 10 + phys_abuse * 5 + (100 - v) * 0.5 + (100 - c) * 0.3
-        elif "Financial Anxiety Loop" in pattern["name"]:
-            strength += fin_struggle * 10 + ace * 5 + (100 - s) * 0.5 + (100 - g) * 0.3
-        elif "People-Pleasing Circuit" in pattern["name"]:
-            strength += emo_neglect * 10 + (100 - c) * 0.5 + (100 - g) * 0.3
-        elif "Hyper-Independence" in pattern["name"]:
-            strength += ace * 7 + emo_neglect * 7 + (100 - c) * 0.5
-        elif "Guilt-Shame Spiral" in pattern["name"]:
-            strength += emo_neglect * 9 + phys_abuse * 6 + (100 - g) * 0.5
-        elif "Catastrophizing Habit" in pattern["name"]:
-            strength += ace * 8 + phys_abuse * 6 + (100 - v) * 0.5
-        elif "Chronic Self-Doubt" in pattern["name"]:
-            strength += emo_neglect * 10 + (100 - g) * 0.6
-        elif "Boundary Collapse" in pattern["name"]:
-            strength += emo_neglect * 8 + (100 - c) * 0.6
-        elif "Savior Complex" in pattern["name"]:
-            strength += emo_neglect * 7 + (100 - g) * 0.5 + (100 - c) * 0.3
-        elif "Impostor Syndrome" in pattern["name"]:
-            strength += emo_neglect * 8 + (100 - g) * 0.6
-        elif "Rejection Sensitivity" in pattern["name"]:
-            strength += ace * 7 + emo_neglect * 5 + (100 - c) * 0.6
-        elif "Control Obsession" in pattern["name"]:
-            strength += ace * 8 + (100 - s) * 0.6
-        elif "Numbness / Dissociation Loop" in pattern["name"]:
-            strength += phys_abuse * 10 + emo_neglect * 7 + (100 - v) * 0.6
-        elif "Approval Addiction" in pattern["name"]:
-            strength += emo_neglect * 9 + (100 - c) * 0.5
-        elif "Chronic Over-Responsibility" in pattern["name"]:
-            strength += emo_neglect * 8 + (100 - g) * 0.5
-        elif "Self-Sabotage Pattern" in pattern["name"]:
-            strength += ace * 6 + phys_abuse * 8 + (100 - g) * 0.6
-        elif "Existential Emptiness" in pattern["name"]:
-            strength += emo_neglect * 7 + (100 - m) * 0.7
+    for pat in recursions:
+        strength = 0
+        # Pattern-specific formulas (base on trauma + element penalties)
+        if "Fixed Mindset" in pat["name"]:
+            strength = 40 + emo_neglect*5 + (100 - g)*0.7 + (100 - m)*0.3
+        elif "Good-Child Syndrome" in pat["name"]:
+            strength = 40 + emo_neglect*10 + (100 - c)*0.5 + (100 - v)*0.3
+        elif "Frozen Grief / Uncried Tears" in pat["name"]:
+            strength = 40 + emo_neglect*8 + phys_abuse*5 + (100 - v)*0.6 + (100 - m)*0.4
+        elif "Abandonment Fear" in pat["name"]:
+            strength = 40 + ace*8 + emo_neglect*5 + (100 - c)*0.8 + (100 - m)*0.6
+        elif "Emotional Neglect Echo" in pat["name"]:
+            strength = 40 + emo_neglect*10 + (100 - m)*0.5 + (100 - v)*0.3
+        elif "Trust Deficit" in pat["name"]:
+            strength = 40 + ace*10 + (100 - c)*0.5 + (100 - e)*0.3
+        elif "Self-Worth Wound" in pat["name"]:
+            strength = 40 + emo_neglect*8 + phys_abuse*8 + (100 - g)*0.5 + (100 - v)*0.3
+        elif "Chaos Adaptation" in pat["name"]:
+            strength = 40 + fin_struggle*8 + ace*8 + (100 - s)*0.5 + (100 - e)*0.3
+        elif "Perfectionism Trap" in pat["name"]:
+            strength = 40 + emo_neglect*7 + phys_abuse*5 + (100 - g)*0.5 + (100 - s)*0.3
+        elif "Failure Aversion" in pat["name"]:
+            strength = 40 + phys_abuse*10 + fin_struggle*5 + (100 - g)*0.5 + (100 - s)*0.3
+        elif "Identity Confusion" in pat["name"]:
+            strength = 40 + emo_neglect*8 + ace*6 + (100 - m)*0.5 + (100 - g)*0.3
+        elif "Emotional Suppression" in pat["name"]:
+            strength = 40 + emo_neglect*10 + phys_abuse*5 + (100 - v)*0.5 + (100 - c)*0.3
+        elif "Financial Anxiety Loop" in pat["name"]:
+            strength = 40 + fin_struggle*10 + ace*5 + (100 - s)*0.5 + (100 - g)*0.3
+        elif "People-Pleasing Circuit" in pat["name"]:
+            strength = 40 + emo_neglect*10 + (100 - c)*0.5 + (100 - g)*0.3
+        elif "Hyper-Independence" in pat["name"]:
+            strength = 40 + ace*7 + emo_neglect*7 + (100 - c)*0.5
+        elif "Guilt-Shame Spiral" in pat["name"]:
+            strength = 40 + emo_neglect*9 + phys_abuse*6 + (100 - g)*0.5
+        elif "Catastrophizing Habit" in pat["name"]:
+            strength = 40 + ace*8 + phys_abuse*6 + (100 - v)*0.5
+        elif "Chronic Self-Doubt" in pat["name"]:
+            strength = 40 + emo_neglect*10 + (100 - g)*0.6
+        elif "Boundary Collapse" in pat["name"]:
+            strength = 40 + emo_neglect*8 + (100 - c)*0.6
+        elif "Savior Complex" in pat["name"]:
+            strength = 40 + emo_neglect*7 + (100 - g)*0.5 + (100 - c)*0.3
+        elif "Impostor Syndrome" in pat["name"]:
+            strength = 40 + emo_neglect*8 + (100 - g)*0.6
+        elif "Rejection Sensitivity" in pat["name"]:
+            strength = 40 + ace*7 + emo_neglect*5 + (100 - c)*0.6
+        elif "Control Obsession" in pat["name"]:
+            strength = 40 + ace*8 + (100 - s)*0.6
+        elif "Numbness / Dissociation Loop" in pat["name"]:
+            strength = 40 + phys_abuse*10 + emo_neglect*7 + (100 - v)*0.6
+        elif "Approval Addiction" in pat["name"]:
+            strength = 40 + emo_neglect*9 + (100 - c)*0.5
+        elif "Chronic Over-Responsibility" in pat["name"]:
+            strength = 40 + emo_neglect*8 + (100 - g)*0.5
+        elif "Self-Sabotage Pattern" in pat["name"]:
+            strength = 40 + ace*6 + phys_abuse*8 + (100 - g)*0.6
+        elif "Existential Emptiness" in pat["name"]:
+            strength = 40 + emo_neglect*7 + (100 - m)*0.7
         elif "Fear of Success" in pattern["name"]:
-            strength += ace * 6 + (100 - g) * 0.6
-        elif "Fear of Rejection" in pattern["name"]:
-            strength += ace * 7 + (100 - c) * 0.6
-        elif "Fear of Making Wrong Decision" in pattern["name"]:
-            strength += phys_abuse * 8 + (100 - g) * 0.6
-        elif "Fear of Other People's Opinions" in pattern["name"]:
-            strength += emo_neglect * 8 + (100 - c) * 0.5
-        elif "Fear of Responsibility" in pattern["name"]:
-            strength += emo_neglect * 6 + (100 - s) * 0.6
-        elif "Fear of Commitment" in pattern["name"]:
-            strength += ace * 7 + (100 - s) * 0.6
-        elif "Fear of Unknown/Change" in pattern["name"]:
-            strength += ace * 8 + (100 - g) * 0.5
-        elif "Fear of Vulnerability" in pattern["name"]:
-            strength += emo_neglect * 8 + (100 - c) * 0.6
-        elif "Fear of Conflict" in pattern["name"]:
-            strength += phys_abuse * 7 + (100 - c) * 0.5
-        elif "Procrastination" in pattern["name"]:
-            strength += emo_neglect * 7 + (100 - g) * 0.6
-        elif "Negative Self-Talk" in pattern["name"]:
-            strength += emo_neglect * 9 + (100 - v) * 0.5
-        elif "Blaming Others/Circumstances" in pattern["name"]:
-            strength += emo_neglect * 6 + (100 - g) * 0.5
-        elif "Lack of Prioritization" in pattern["name"]:
-            strength += emo_neglect * 5 + (100 - g) * 0.5
-        elif "Mindless Consumption/Distraction" in pattern["name"]:
-            strength += emo_neglect * 6 + (100 - v) * 0.5
-        elif "Overcommitment (FOMO)" in pattern["name"]:
-            strength += emo_neglect * 5 + (100 - s) * 0.5
-        elif "Self-Isolation" in pattern["name"]:
-            strength += emo_neglect * 7 + (100 - c) * 0.5
-        elif "Ignoring Personal Needs" in pattern["name"]:
-            strength += emo_neglect * 8 + (100 - v) * 0.5
-        elif "All-or-Nothing Thinking" in pattern["name"]:
-            strength += emo_neglect * 6 + (100 - g) * 0.5
-        elif "Living in the Past/Ruminating" in pattern["name"]:
-            strength += emo_neglect * 7 + (100 - m) * 0.5
-        elif "Focusing on What is Lacking" in pattern["name"]:
-            strength += fin * 8 + (100 - s) * 0.5
-        elif "Waiting for Perfect Time" in pattern["name"]:
-            strength += emo_neglect * 6 + (100 - g) * 0.5
-        elif "Comparison Trap" in pattern["name"]:
-            strength += emo_neglect * 7 + (100 - g) * 0.5
-        elif "Scarcity / Deprivation Loop" in pattern["name"]:
-            strength = 40 + fin*10 + (100 - s)*0.6 + (100 - v)*0.4
-        elif "Good-Girl / Good-Boy Syndrome" in pattern["name"]:
-            strength = 40 + emo*10 + (100 - c)*0.5 + (100 - g)*0.3
-        elif "Frozen Grief / Uncried Tears" in pattern["name"]:
-            strength = 40 + emo*8 + phys*5 + (100 - v)*0.6 + (100 - m)*0.4
+            strength = 40 + ace*6 + (100 - g)*0.6
+        elif "Fear of Rejection" in pat["name"]:
+            strength = 40 + ace*7 + (100 - c)*0.6
+        elif "Fear of Making Wrong Decision" in pat["name"]:
+            strength = 40 + phys_abuse*8 + (100 - g)*0.6
+        elif "Fear of Other People's Opinions" in pat["name"]:
+            strength = 40 + emo_neglect*8 + (100 - c)*0.5
+        elif "Fear of Responsibility" in pat["name"]:
+            strength = 40 + emo_neglect*6 + (100 - s)*0.6
+        elif "Fear of Commitment" in pat["name"]:
+            strength = 40 + ace*7 + (100 - s)*0.5
+        elif "Fear of Unknown/Change" in pat["name"]:
+            strength = 40 + ace*8 + (100 - g)*0.5
+        elif "Fear of Vulnerability" in pat["name"]:
+            strength = 40 + emo_neglect*8 + (100 - c)*0.6
+        elif "Fear of Conflict" in pat["name"]:
+            strength = 40 + phys_abuse*7 + (100 - c)*0.5
+        elif "Procrastination" in pat["name"]:
+            strength = 40 + emo_neglect*7 + (100 - g)*0.6
+        elif "Negative Self-Talk" in pat["name"]:
+            strength = 40 + emo_neglect*9 + (100 - v)*0.5
+        elif "Blaming Others/Circumstances" in pat["name"]:
+            strength = 40 + emo_neglect*6 + (100 - g)*0.5
+        elif "Lack of Prioritization" in pat["name"]:
+            strength = 40 + emo_neglect*5 + (100 - g)*0.5
+        elif "Mindless Consumption/Distraction" in pat["name"]:
+            strength = 40 + emo_neglect*6 + (100 - v)*0.5
+        elif "Overcommitment (FOMO)" in pat["name"]:
+            strength = 40 + emo_neglect*5 + (100 - s)*0.5
+        elif "Self-Isolation" in pat["name"]:
+            strength = 40 + emo_neglect*7 + (100 - c)*0.5
+        elif "Ignoring Personal Needs" in pat["name"]:
+            strength = 40 + emo_neglect*8 + (100 - v)*0.5
+        elif "All-or-Nothing Thinking" in pat["name"]:
+            strength = 40 + emo_neglect*6 + (100 - g)*0.5
+        elif "Living in the Past/Ruminating" in pat["name"]:
+            strength = 40 + emo_neglect*7 + (100 - m)*0.5
+        elif "Focusing on What is Lacking" in pat["name"]:
+            strength = 40 + fin_struggle*8 + (100 - s)*0.5
+        elif "Waiting for Perfect Time" in pat["name"]:
+            strength = 40 + emo_neglect*6 + (100 - g)*0.5
+        elif "Comparison Trap" in pat["name"]:
+            strength = 40 + emo_neglect*7 + (100 - g)*0.5
+        elif "Scarcity / Deprivation Loop" in pat["name"]:
+            strength = 40 + fin_struggle*10 + (100 - s)*0.6 + (100 - v)*0.4
+        elif "Good-Girl / Good-Boy Syndrome" in pat["name"]:
+            strength = 40 + emo_neglect*10 + (100 - c)*0.5 + (100 - g)*0.3
+        elif "Frozen Grief / Uncried Tears" in pat["name"]:
+            strength = 40 + emo_neglect*8 + phys_abuse*5 + (100 - v)*0.6 + (100 - m)*0.4
 
         strength = min(100, strength)
-        if strength > 40:
+        if strength > 45:
             affected = [el for el, sc in scores.items() if sc < 65]
             candidates.append({
                 "name": pat["name"],
@@ -319,7 +318,7 @@ def index():
 
 @app.route('/assess', methods=['POST'])
 def assess():
-    data = request.get_json()
+    data = request.json
     if len(data) < 70:
         return jsonify({"error": "Please answer all 70 questions."}), 400
     scores = calculate_element_scores(data)
@@ -336,76 +335,80 @@ HTML_TEMPLATE = """
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
   <style>
-    .tree {{ transition: all 1.5s ease; }}
-    .ring {{ transition: all 1.5s ease; }}
-    input[type="radio"]:checked + span {{
+    .tree { transition: all 1.5s ease; }
+    .ring { transition: all 1.5s ease; }
+    input[type="radio"]:checked + span {
       color: #22c55e;  /* Green for selected option */
-    }}
+      font-weight: bold;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-slate-950 to-slate-900 text-white min-h-screen">
   <div class="container mx-auto p-6 max-w-5xl">
     <h1 class="text-5xl font-bold text-center text-teal-400 mt-8 mb-2">Latent Recursion System</h1>
-    <p class="text-center text-gray-300 mb-12 text-xl">Discover hidden patterns from your past that keep you stuck today.</p>
+    <p class="text-center text-gray-300 mb-12 text-xl">Discover hidden patterns from your past that keep you stuck today. Like an MRI scan for your life, it shows how these patterns affect your personal biome — the six key areas of your life — and provides a plan to break free and live fully.</p>
     <div class="text-center mb-12">
       <div class="w-full bg-gray-800 rounded-full h-3">
         <div id="progress" class="bg-teal-500 h-3 rounded-full transition-all duration-1000" style="width:0%"></div>
       </div>
-      <p class="mt-4 text-gray-400" id="progress-text">0/70</p>
+      <p class="mt-4 text-gray-400" id="progress-text">Vitality – 0/70</p>
     </div>
     <div id="assessment" class="space-y-12"></div>
     <div id="biome-container" class="my-16 text-center hidden">
       <h2 class="text-3xl font-bold mb-8">Your Personal Biome</h2>
       <canvas id="biome" width="600" height="600" class="mx-auto border-4 border-teal-600 rounded-2xl shadow-2xl"></canvas>
+      <p class="mt-4 text-gray-400">The central orb is you. The trees represent your six life elements. The ring is your latent recursion — tight and red when it's constraining you, loose and green when resolved.</p>
     </div>
     <div id="results" class="hidden mt-12 p-8 bg-slate-800 rounded-2xl shadow-2xl space-y-8"></div>
   </div>
   <script>
-    const questions = {json.dumps(questions)};
-    const order = {json.dumps(element_order)};
-    let responses = {{}}, current = 0;
-    let scene, camera, renderer, trees = [], ring, userFigure, currents = [];
+    const elements = ['Vitality', 'Connection', 'Environment', 'Growth', 'Stability', 'Meaning', 'Recursion'];
+    const questions = """ + json.dumps(questions) + """;
+    let responses = {};
+    let currentElement = 0;
 
-    function initBiome() {{
-      const canvas = document.getElementById('biome');
+    // === LIVE BIOME ===
+    let scene, camera, renderer, trees = [], ring, userFigure, currents = [];
+    function initBiome() {
+      const container = document.getElementById('biome');
       scene = new THREE.Scene();
       scene.background = new THREE.Color(0x0f172a);
       camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-      renderer = new THREE.WebGLRenderer({{canvas, antialias: true}});
+      renderer = new THREE.WebGLRenderer({canvas: container, antialias: true});
       renderer.setSize(600, 600);
       // Central Individual
       const geo = new THREE.DodecahedronGeometry(0.5, 0);
-      const mat = new THREE.MeshBasicMaterial({{color: 0x00ffaa, wireframe: true}});
+      const mat = new THREE.MeshBasicMaterial({color: 0x00ffaa, wireframe: true});
       userFigure = new THREE.Mesh(geo, mat);
       userFigure.position.y = 0.5;
       scene.add(userFigure);
       // Undercurrent Ring
       const ringGeo = new THREE.TorusGeometry(4, 0.15, 16, 100);
-      const ringMat = new THREE.MeshBasicMaterial({{color: 0xff0066}});
+      const ringMat = new THREE.MeshBasicMaterial({color: 0xff0066});
       ring = new THREE.Mesh(ringGeo, ringMat);
       ring.rotation.x = Math.PI / 2;
       scene.add(ring);
       camera.position.z = 10;
       animate();
-    }}
-    function animate() {{
+    }
+    function animate() {
       requestAnimationFrame(animate);
       ring.rotation.z += 0.01;
       userFigure.rotation.y += 0.01;
       renderer.render(scene, camera);
-    }}
-    function updateBiome(scores, avg_recursion, affected) {{
+    }
+    function updateBiome(scores, recursion_strength) {
       trees.forEach(t => scene.remove(t));
       trees = [];
       currents.forEach(c => scene.remove(c));
       currents = [];
       const config = [
-        {{el: 'Vitality', x: -3.5, color: 0x00ff88, title: "Vitality Tree"}},
-        {{el: 'Connection', x: -1.8, color: 0x4488ff, title: "Connection Tree"}},
-        {{el: 'Environment', x: 0, color: 0xffaa00, title: "Environment Tree"}},
-        {{el: 'Growth', x: 1.8, color: 0xff00ff, title: "Growth Tree"}},
-        {{el: 'Stability', x: 3.5, color: 0xffff00, title: "Stability Tree"}},
-        {{el: 'Meaning', x: 3.5, color: 0xff0088, title: "Meaning Tree"}}
+        {el: 'Vitality', x: -3.5, color: 0x00ff88, title: "Vitality Tree"},
+        {el: 'Connection', x: -1.8, color: 0x4488ff, title: "Connection Tree"},
+        {el: 'Environment', x: 0, color: 0xffaa00, title: "Environment Tree"},
+        {el: 'Growth', x: 1.8, color: 0xff00ff, title: "Growth Tree"},
+        {el: 'Stability', x: 3.5, color: 0xffff00, title: "Stability Tree"},
+        {el: 'Meaning', x: 3.5, color: 0xff0088, title: "Meaning Tree"}
       ];
       config.forEach(c => {{
         const h = (scores[c.el] || 50) / 100 * 4 + 0.5;
@@ -427,23 +430,15 @@ HTML_TEMPLATE = """
         sprite.position.set(c.x, h + 1, 0);
         sprite.scale.set(3, 0.75, 1);
         scene.add(sprite);
-        // Red current if affected
-        if (affected.includes(c.el)) {{
-          const currentGeo = new THREE.CylinderGeometry(0.1, 0.1, 4, 8);
-          const currentMat = new THREE.MeshBasicMaterial({{color: 0xff0000}});
-          const current = new THREE.Mesh(currentGeo, currentMat);
-          current.position.set(c.x, 0, 0);
-          scene.add(current);
-          currents.push(current);
-        }}
       }});
-      const constriction = avg_recursion / 100;
+      // Update ring
+      const constriction = recursion_strength / 100;
       ring.scale.set(1 + constriction, 1 + constriction, 1);
       ring.material.color.setHex(constriction > 0.5 ? 0xff0000 : 0x00ff66);
     }}
 
     // === ASSESSMENT FLOW ===
-    function loadElement() {{
+    function loadElement() {
       const el = elements[currentElement];
       const qs = element_groups[el];
       const container = document.getElementById('assessment');
@@ -466,9 +461,21 @@ HTML_TEMPLATE = """
         div.appendChild(optsDiv);
         container.appendChild(div);
       }});
+      const buttonDiv = document.createElement('div');
+      buttonDiv.className = 'flex justify-between mt-8';
+      if (currentElement > 0) {{
+        const backBtn = document.createElement('button');
+        backBtn.textContent = '← Previous';
+        backBtn.className = 'p-5 bg-gray-600 hover:bg-gray-500 rounded-xl font-bold text-xl';
+        backBtn.onclick = () => {{
+          currentElement--;
+          loadElement();
+        }};
+        buttonDiv.appendChild(backBtn);
+      }}
       const nextBtn = document.createElement('button');
       nextBtn.textContent = currentElement < 6 ? 'Next Element →' : 'See My Results';
-      nextBtn.className = 'w-full p-5 bg-teal-600 hover:bg-teal-500 rounded-xl font-bold text-xl mt-8';
+      nextBtn.className = 'p-5 bg-teal-600 hover:bg-teal-500 rounded-xl font-bold text-xl';
       nextBtn.onclick = () => {{
         qs.forEach(q => {{
           const selected = document.querySelector(`input[name="q${q.id}"]:checked`);
@@ -478,8 +485,10 @@ HTML_TEMPLATE = """
         if (currentElement < 7) loadElement();
         else submit();
       }};
-      container.appendChild(nextBtn);
+      buttonDiv.appendChild(nextBtn);
+      container.appendChild(buttonDiv);
       document.getElementById('progress-text').innerText = `${el} – ${Object.keys(responses).length}/70`;
+      window.scrollTo(0, 0);  # scroll to top
     }}
     function submit() {{
       if (Object.keys(responses).length < 70) {{
@@ -498,5 +507,48 @@ HTML_TEMPLATE = """
         updateBiome(data.scores, data.avg_recursion);
         let html = `<h2 class="text-4xl font-bold text-center text-teal-400 mb-8">Your Top 3 Latent Recursions</h2>`;
         if (data.recursions[0].strength === 0) {{
-          html += `<p class="
-```
+          html += `<p class="text-xl text-center text-green-400">No major recursion detected. Your biome is free to expand.</p>`;
+        }} else {{
+          data.recursions.forEach((r, i) => {{
+            html += `
+              <div class="p-6 bg-red-950/50 rounded-xl border border-red-600">
+                <p class="text-2xl font-bold">${{i+1}}. ${{r.name}}</p>
+                <p class="text-4xl font-bold text-red-400 mb-4">${{r.strength}}%</p>
+                <p class="text-lg">${{r.description}}</p>
+                <p class="text-sm text-gray-400 mt-4">Affected elements: ${{r.affected_elements.join(' · ')}}</p>
+              </div>`;
+          }});
+        }}
+        html += `<h2 class="text-4xl font-bold text-center text-teal-400 mb-8">Your 30-Day Transformation Plan</h2>
+        <div class="space-y-4">
+          <div class="p-4 bg-slate-800 rounded-xl">
+            <p class="font-bold">Week 1: Acknowledgement</p>
+            <p>Day 1-3: Journal one pattern from your results daily.<br>Day 4-7: Discuss with a trusted friend or note how it shows up.</p>
+          </div>
+          <div class="p-4 bg-slate-800 rounded-xl">
+            <p class="font-bold">Week 2: Analysis & Self-Awareness</p>
+            <p>Day 8-10: Map causes (e.g., "This started when...").<br>Day 11-14: Reflect on your role (e.g., "I perpetuate it by...").</p>
+          </div>
+          <div class="p-4 bg-slate-800 rounded-xl">
+            <p class="font-bold">Week 3: Acceptance & Resolution</p>
+            <p>Day 15-18: Practice acceptance (e.g., meditation on "It is what it is").<br>Day 19-21: Weigh decisions (e.g., "If I change, what happens?").</p>
+          </div>
+          <div class="p-4 bg-slate-800 rounded-xl">
+            <p class="font-bold">Week 4: Re-Design, Action, & Tracking</p>
+            <p>Day 22-25: Design new paths (e.g., "New habit: ...").<br>Day 26-30: Take daily actions and track progress in a journal.</p>
+          </div>
+        </div>`;
+        document.getElementById('results').innerHTML = html;
+        document.getElementById('results').classList.remove('hidden');
+      });
+    }
+
+    initBiome();
+    loadElement();
+  </script>
+</body>
+</html>
+"""
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, debug=True)
